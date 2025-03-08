@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <RuntimeIdentifier>linux-arm</RuntimeIdentifier>        
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Snake.fs" />
+        <Compile Include="Model.fs" />
+        <Compile Include="State.fs" />
+        <Compile Include="View.fs" />
+        <Compile Include="Program.fs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Elmish" Version="4.2.0" />
+      <PackageReference Include="Gamepad" Version="1.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HardwareLayer\HardwareLayer.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Game", "Game\Game.fsproj", "{DC082FAA-D881-4D68-A5B2-5EF5731F8E4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardwareLayer", "HardwareLayer\HardwareLayer.csproj", "{D915DA0B-632E-4C48-AB69-73CF9C1A7430}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC082FAA-D881-4D68-A5B2-5EF5731F8E4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC082FAA-D881-4D68-A5B2-5EF5731F8E4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC082FAA-D881-4D68-A5B2-5EF5731F8E4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC082FAA-D881-4D68-A5B2-5EF5731F8E4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D915DA0B-632E-4C48-AB69-73CF9C1A7430}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D915DA0B-632E-4C48-AB69-73CF9C1A7430}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D915DA0B-632E-4C48-AB69-73CF9C1A7430}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D915DA0B-632E-4C48-AB69-73CF9C1A7430}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
