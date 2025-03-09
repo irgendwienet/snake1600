@@ -59,10 +59,11 @@ module Snake =
         let head = snake.Head
         List.exists (fun pos -> pos.X = head.X && pos.Y = head.Y) snake.Tail
         
-    let IsCollisionWithEachOther (snake1:Snake) (snake2:Snake) =
-        let head1 = snake1.Head
-        let head2 = snake2.Head
-        head1.X = head2.X && head1.Y = head2.Y || List.exists (fun pos -> pos.X = head2.X && pos.Y = head2.Y) snake1.Tail || List.exists (fun pos -> pos.X = head1.X && pos.Y = head1.Y) snake2.Tail
+    let IsHeadCollisionWithAnother (snakeWithHead:Snake) (otherSnake:Snake) =
+        let head = snakeWithHead.Head
+        
+        head.X = otherSnake.Head.X && head.Y = otherSnake.Head.Y
+        || List.exists (fun pos -> pos.X = head.X && pos.Y = head.Y) otherSnake.Tail
         
     let IsPartOfSnake (snake:Snake) (pos:Position) =
         pos.X = snake.Head.X && pos.Y = snake.Head.Y || List.exists (fun p -> p.X = pos.X && p.Y = pos.Y) snake.Tail

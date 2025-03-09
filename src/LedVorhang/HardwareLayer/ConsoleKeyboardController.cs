@@ -5,7 +5,7 @@ public class ConsoleKeyboardController : IDisposable
     private readonly Thread _keyboardThread;
     private volatile bool _running = true;
 
-    public event EventHandler<ConsoleKeyboardEventArgs> KeyPressed;
+    public event EventHandler<ConsoleKeyboardEventArgs>? KeyPressed;
 
     public ConsoleKeyboardController()
     {

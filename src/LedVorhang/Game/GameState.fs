@@ -43,35 +43,46 @@ let gameUpdate msg (model:Model) (game:Game) =
         { model with CurrentPage = Game g }, Cmd.none
 
     | Tick ->
-        let newPlayer1 = game.Player1 |> Snake.Move
-        let newPlayer2 = game.Player2 |> Snake.Move
+        let newPlayer1 = if game.Player1Alive then game.Player1 |> Snake.Move else game.Player1
+        let newPlayer2 = if game.Player2Alive then game.Player2 |> Snake.Move else game.Player2
         
-        let gameOver =
+        let player1Dies =
             Snake.IsCollisionWithBorder newPlayer1
             || Snake.IsCollisionWithTail newPlayer1
-            || Snake.IsCollisionWithBorder newPlayer2
+            || Snake.IsHeadCollisionWithAnother newPlayer1 newPlayer2
+        
+        let player2Dies =
+            Snake.IsCollisionWithBorder newPlayer2
             || Snake.IsCollisionWithTail newPlayer2
-            || Snake.IsCollisionWithEachOther newPlayer1 newPlayer2
-            
+            || Snake.IsHeadCollisionWithAnother newPlayer2 newPlayer1
+        
+        let game = { game with
+                        Player1Alive = game.Player1Alive && not player1Dies
+                        Player2Alive = game.Player2Alive && not player2Dies }
+                    
         let cmd =
-            if gameOver then
+            if not game.Player1Alive && not game.Player2Alive then
                 Cmd.ofMsg ItsGameOver
             else
                 Cmd.none
-
-        let game = { game with Player1 = newPlayer1; Player2 = newPlayer2 }
         
+        let game = { game with
+                        Player1 = if game.Player1Alive then newPlayer1 else game.Player1
+                        Player2 = if game.Player2Alive then newPlayer2 else game.Player2 }
+
         let game =          
-            if game.Player1.Head = game.Food then
+            if game.Player1Alive && game.Player1.Head = game.Food then
                 let newFood = newFoodPos game
                 
                 { game with
+                    Player1.Growth = game.Player1.Growth + 1
                     Player1Points = game.Player1Points + 1
                     Food = newFood }
-            elif game.Player2.Head = game.Food then
+            elif game.Player2Alive && game.Player2.Head = game.Food then
                 let newFood = newFoodPos game
                 
                 { game with
+                    Player2.Growth = game.Player2.Growth + 1
                     Player2Points = game.Player2Points + 1
                     Food = newFood }
             else
@@ -80,12 +91,7 @@ let gameUpdate msg (model:Model) (game:Game) =
         { model with CurrentPage = Game game }, cmd
 
     | ItsGameOver ->
-        let score = {
-            Player1Points = Some game.Player1Points
-            Player2Points = Some game.Player2Points
-        }
-        
-        { model with CurrentPage = GameOver score }, Cmd.none
+        { model with CurrentPage = GameOver game }, Cmd.none
         
     | _ ->
         model, Cmd.none

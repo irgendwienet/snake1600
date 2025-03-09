@@ -39,17 +39,19 @@ let viewGame (game:Game) =
     game.Player2 |> showSnake Color.Blue Color.DarkOliveGreen
     game.Food |> showFood
 
-let viewGameOver (score:Score) =
+let viewGameOver (game:Game) =
+    viewGame game
     showCrossHair Color.Red
 
 let view (display:IDisplay) (model:Model) dispatch =
-    
+
+        
     clear()       
     showOuterBorder()
     
     match model.CurrentPage with
     | SelectPlayers -> viewSelectPlayers ()
     | Game game -> viewGame game
-    | GameOver score -> viewGameOver score
+    | GameOver game -> viewGameOver game
     
     display.Update image

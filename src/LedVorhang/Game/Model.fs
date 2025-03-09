@@ -11,16 +11,11 @@ type Game = {
     Player2Points: int
     Player2Alive: bool
 }
-    
-type Score = {
-    Player1Points: int option
-    Player2Points: int option
-}
 
 type Page =
     | SelectPlayers
     | Game of Game
-    | GameOver of Score
+    | GameOver of Game
 
 type Model = {
     Player1ControlerMirrored: bool
