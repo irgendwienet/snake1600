@@ -64,6 +64,12 @@ let subscribe model =
                 | 7uy when args.Value > 0s -> GamepadDirectionButton.Down |> directionPressed |> dispatch
                 | 6uy when args.Value < 0s -> GamepadDirectionButton.Left |> directionPressed |> dispatch
                 | 6uy when args.Value > 0s -> GamepadDirectionButton.Right |> directionPressed |> dispatch
+
+                | 1uy when args.Value < -10000s -> GamepadDirectionButton.Up |> directionPressed |> dispatch
+                | 1uy when args.Value > 10000s -> GamepadDirectionButton.Down |> directionPressed |> dispatch
+                | 0uy when args.Value < -10000s -> GamepadDirectionButton.Left |> directionPressed |> dispatch
+                | 0uy when args.Value > 10000s -> GamepadDirectionButton.Right |> directionPressed |> dispatch
+
                 | _ -> ())
 
         { new IDisposable with
