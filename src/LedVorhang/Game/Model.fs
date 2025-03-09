@@ -9,17 +9,28 @@ type Model = {
     Player1: Snake
     Player1Points: int
     Player1ControlerMirrored: bool
-    
+
+    Player2: Snake
+    Player2Points: int
+    Player2ControlerMirrored: bool
+        
     IsPreGame: bool       
 }
+
+let initSnake1 () = Snake.Init 10 20 Direction.Up
+let initSnake2 () = Snake.Init 30 20 Direction.Down
 
 let init () =
     {
       Food = { X = 7; Y = 7 }
       
-      Player1 = Snake.Init 20 20
+      Player1 = initSnake1()
       Player1Points = 0
       Player1ControlerMirrored = false
+
+      Player2 = initSnake2()
+      Player2Points = 0
+      Player2ControlerMirrored = false
       
       IsPreGame = true;
     }
@@ -42,8 +53,10 @@ type GamepadDirectionButton =
     | Right
 
 type Msg =
-    | GamepadButtonPressed of GamepadButton
-    | GamepadDirectionPressed of GamepadDirectionButton
+    | Gamepad1ButtonPressed of GamepadButton
+    | Gamepad1DirectionPressed of GamepadDirectionButton
+    | Gamepad2ButtonPressed of GamepadButton
+    | Gamepad2DirectionPressed of GamepadDirectionButton
     
     | Tick
     

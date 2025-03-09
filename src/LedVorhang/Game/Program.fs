@@ -39,31 +39,31 @@ let subscribe model =
         { new IDisposable with
             member _.Dispose() = timer.Dispose() }
         
-    let gampadSub dispatch =
-        let gamepad = new GamepadController("/dev/input/js0")
+    let gampadSub path buttonPressed directionPressed dispatch =
+        let gamepad = new GamepadController(path)
         
         gamepad.ButtonChanged.Add
             (fun args ->
                 if args.Pressed then
                     match args.Button with
-                    | 0uy -> GamepadButton.A |> GamepadButtonPressed |> dispatch
-                    | 1uy -> GamepadButton.B |> GamepadButtonPressed |> dispatch
-                    | 2uy -> GamepadButton.X |> GamepadButtonPressed |> dispatch
-                    | 3uy -> GamepadButton.Y |> GamepadButtonPressed |> dispatch
-                    | 4uy -> GamepadButton.ShoulderLeft |> GamepadButtonPressed |> dispatch
-                    | 5uy -> GamepadButton.ShoulderRight |> GamepadButtonPressed |> dispatch
-                    | 6uy -> GamepadButton.Back |> GamepadButtonPressed |> dispatch
-                    | 7uy -> GamepadButton.Start |> GamepadButtonPressed |> dispatch
-                    | 8uy -> GamepadButton.Dragon |> GamepadButtonPressed |> dispatch
+                    | 0uy -> GamepadButton.A |> buttonPressed |> dispatch
+                    | 1uy -> GamepadButton.B |> buttonPressed |> dispatch
+                    | 2uy -> GamepadButton.X |> buttonPressed |> dispatch
+                    | 3uy -> GamepadButton.Y |> buttonPressed |> dispatch
+                    | 4uy -> GamepadButton.ShoulderLeft |> buttonPressed |> dispatch
+                    | 5uy -> GamepadButton.ShoulderRight |> buttonPressed |> dispatch
+                    | 6uy -> GamepadButton.Back |> buttonPressed |> dispatch
+                    | 7uy -> GamepadButton.Start |> buttonPressed |> dispatch
+                    | 8uy -> GamepadButton.Dragon |> buttonPressed |> dispatch
                     | _ -> ())
             
         gamepad.AxisChanged.Add
             (fun args ->
                 match args.Axis with
-                | 7uy when args.Value < 0s -> GamepadDirectionButton.Up |> GamepadDirectionPressed |> dispatch
-                | 7uy when args.Value > 0s -> GamepadDirectionButton.Down |> GamepadDirectionPressed |> dispatch
-                | 6uy when args.Value < 0s -> GamepadDirectionButton.Left |> GamepadDirectionPressed |> dispatch
-                | 6uy when args.Value > 0s -> GamepadDirectionButton.Right |> GamepadDirectionPressed |> dispatch
+                | 7uy when args.Value < 0s -> GamepadDirectionButton.Up |> directionPressed |> dispatch
+                | 7uy when args.Value > 0s -> GamepadDirectionButton.Down |> directionPressed |> dispatch
+                | 6uy when args.Value < 0s -> GamepadDirectionButton.Left |> directionPressed |> dispatch
+                | 6uy when args.Value > 0s -> GamepadDirectionButton.Right |> directionPressed |> dispatch
                 | _ -> ())
 
         { new IDisposable with
@@ -76,16 +76,16 @@ let subscribe model =
             (fun args ->
                 match args.KeyCode with
                 // Button mapping
-                | ConsoleKey.Y -> GamepadButton.A |> GamepadButtonPressed |> dispatch
-                | ConsoleKey.X -> GamepadButton.B |> GamepadButtonPressed |> dispatch
-                | ConsoleKey.A -> GamepadButton.X |> GamepadButtonPressed |> dispatch
-                | ConsoleKey.S -> GamepadButton.Y |> GamepadButtonPressed |> dispatch
+                | ConsoleKey.Y -> GamepadButton.A |> Gamepad1ButtonPressed |> dispatch
+                | ConsoleKey.X -> GamepadButton.B |> Gamepad1ButtonPressed |> dispatch
+                | ConsoleKey.A -> GamepadButton.X |> Gamepad1ButtonPressed |> dispatch
+                | ConsoleKey.S -> GamepadButton.Y |> Gamepad1ButtonPressed |> dispatch
 
                 // Direction mapping
-                | ConsoleKey.LeftArrow -> GamepadDirectionButton.Left |> GamepadDirectionPressed |> dispatch
-                | ConsoleKey.RightArrow -> GamepadDirectionButton.Right |> GamepadDirectionPressed |> dispatch
-                | ConsoleKey.UpArrow -> GamepadDirectionButton.Up |> GamepadDirectionPressed |> dispatch
-                | ConsoleKey.DownArrow -> GamepadDirectionButton.Down |> GamepadDirectionPressed |> dispatch
+                | ConsoleKey.LeftArrow -> GamepadDirectionButton.Left |> Gamepad1DirectionPressed |> dispatch
+                | ConsoleKey.RightArrow -> GamepadDirectionButton.Right |> Gamepad1DirectionPressed |> dispatch
+                | ConsoleKey.UpArrow -> GamepadDirectionButton.Up |> Gamepad1DirectionPressed |> dispatch
+                | ConsoleKey.DownArrow -> GamepadDirectionButton.Down |> Gamepad1DirectionPressed |> dispatch
                 | _ -> ())
 
         { new IDisposable with
@@ -93,8 +93,8 @@ let subscribe model =
     
     [
         [ "timer" ], timerSub
-        [ "gamepad" ], gampadSub // keyboardSub // gampadSub
-    
+        [ "gamepad1" ], (gampadSub "/dev/input/js0" Gamepad1ButtonPressed Gamepad1DirectionPressed) // keyboardSub // gampadSub
+        [ "gamepad2" ], (gampadSub "/dev/input/js1" Gamepad2ButtonPressed Gamepad2DirectionPressed)    
     ]
 
 Program.mkProgram (fun _ -> init(), Cmd.none) State.update (View.view display)

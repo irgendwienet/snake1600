@@ -1,5 +1,6 @@
 ﻿module Game.View
 
+open System
 open System.Drawing
 open Game.Model
 open HardwareLayer
@@ -9,9 +10,9 @@ let image = LedImage(40,40)
 let setPixel (x:int) (y:int) (color:Color) = image.SetPixel(x, y, color)    
 let clear () = image.Clear()
 
-let showSnake (snake:Snake) =
-    setPixel snake.Head.X snake.Head.Y Color.Red
-    snake.Tail |> List.iter (fun pos -> setPixel pos.X pos.Y Color.Orange)
+let showSnake headColor tailColor (snake:Snake)=
+    setPixel snake.Head.X snake.Head.Y headColor
+    snake.Tail |> List.iter (fun pos -> setPixel pos.X pos.Y tailColor)
 
 let showFood (p:Position) =
     setPixel p.X p.Y Color.Green
@@ -32,10 +33,9 @@ let view (display:IDisplay) (model:Model) dispatch =
     showOuterBorder()
     
     if not model.IsPreGame then
-        model.Player1 |> showSnake
-        
+        model.Player1 |> showSnake Color.Red Color.Yellow
+        model.Player2 |> showSnake Color.Blue Color.DarkOliveGreen
         model.Food |> showFood
-        
     else
         for i in 0..10 do
                 setPixel (15+i) (15+i) Color.Blue
