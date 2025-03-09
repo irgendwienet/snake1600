@@ -26,19 +26,30 @@ let showOuterBorder () =
         setPixel 0 y Color.White
         setPixel 39 y Color.White
 
+let showCrossHair color =
+    for i in 0..10 do
+        setPixel (15+i) (15+i) color
+        setPixel (15+i) (25-i) color
+
+let viewSelectPlayers () =
+    showCrossHair Color.Green
+
+let viewGame (game:Game) =
+    game.Player1 |> showSnake Color.Red Color.Yellow
+    game.Player2 |> showSnake Color.Blue Color.DarkOliveGreen
+    game.Food |> showFood
+
+let viewGameOver (score:Score) =
+    showCrossHair Color.Red
+
 let view (display:IDisplay) (model:Model) dispatch =
     
-    clear()
-       
+    clear()       
     showOuterBorder()
     
-    if not model.IsPreGame then
-        model.Player1 |> showSnake Color.Red Color.Yellow
-        model.Player2 |> showSnake Color.Blue Color.DarkOliveGreen
-        model.Food |> showFood
-    else
-        for i in 0..10 do
-                setPixel (15+i) (15+i) Color.Blue
-                setPixel (15+i) (25-i) Color.Blue
-                
+    match model.CurrentPage with
+    | SelectPlayers -> viewSelectPlayers ()
+    | Game game -> viewGame game
+    | GameOver score -> viewGameOver score
+    
     display.Update image

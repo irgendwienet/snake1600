@@ -34,7 +34,7 @@ module Snake =
             if snake.Growth > 0 then
                 oldHead :: snake.Tail, snake.Growth - 1
             else
-                oldHead :: List.init (List.length snake.Tail - 1) (fun i -> List.nth snake.Tail i), 0 // stimmt das?
+                oldHead :: List.init (List.length snake.Tail - 1) (fun i -> snake.Tail |> List.item i), 0 
         
         { snake with Head = newHead; Tail = newTail; Growth = growth }
         

@@ -1,20 +1,32 @@
 ﻿module Game.Model
 
-open System.Drawing
-open Elmish.Sub
-
-type Model = {
+type Game = {
     Food: Position
     
     Player1: Snake
     Player1Points: int
-    Player1ControlerMirrored: bool
-
+    Player1Alive: bool
+            
     Player2: Snake
     Player2Points: int
+    Player2Alive: bool
+}
+    
+type Score = {
+    Player1Points: int option
+    Player2Points: int option
+}
+
+type Page =
+    | SelectPlayers
+    | Game of Game
+    | GameOver of Score
+
+type Model = {
+    Player1ControlerMirrored: bool
     Player2ControlerMirrored: bool
         
-    IsPreGame: bool       
+    CurrentPage: Page  
 }
 
 let initSnake1 () = Snake.Init 10 20 Direction.Up
@@ -22,17 +34,10 @@ let initSnake2 () = Snake.Init 30 20 Direction.Down
 
 let init () =
     {
-      Food = { X = 7; Y = 7 }
-      
-      Player1 = initSnake1()
-      Player1Points = 0
       Player1ControlerMirrored = false
-
-      Player2 = initSnake2()
-      Player2Points = 0
       Player2ControlerMirrored = false
       
-      IsPreGame = true;
+      CurrentPage = SelectPlayers
     }
 
 type GamepadButton =
@@ -60,4 +65,4 @@ type Msg =
     
     | Tick
     
-    | GameOver
+    | ItsGameOver

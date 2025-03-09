@@ -9,6 +9,7 @@
     <ItemGroup>
         <Compile Include="Snake.fs" />
         <Compile Include="Model.fs" />
+        <Compile Include="GameState.fs" />
         <Compile Include="State.fs" />
         <Compile Include="View.fs" />
         <Compile Include="Program.fs"/>
