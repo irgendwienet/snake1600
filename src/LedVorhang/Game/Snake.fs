@@ -15,7 +15,8 @@ type Snake = {
     Head: Position
     Tail: Position list
     
-    Direction: Direction
+    CurrentDirection: Direction
+    DirectionChangesTo: Direction
     Growth: int
 }
 
@@ -24,7 +25,7 @@ module Snake =
         let oldHead = snake.Head
         
         let newHead =
-            match snake.Direction with
+            match snake.DirectionChangesTo with
             | Up -> { snake.Head with X = snake.Head.X - 1 }
             | Down -> { snake.Head with X = snake.Head.X + 1 }
             | Left -> { snake.Head with Y = snake.Head.Y + 1 }
@@ -36,20 +37,24 @@ module Snake =
             else
                 oldHead :: List.init (List.length snake.Tail - 1) (fun i -> snake.Tail |> List.item i), 0 
         
-        { snake with Head = newHead; Tail = newTail; Growth = growth }
+        { snake with
+            Head = newHead
+            CurrentDirection = snake.DirectionChangesTo
+            Tail = newTail
+            Growth = growth }
         
     let ChangeDirection (direction:Direction) (snake:Snake) =
-        if (snake.Direction = Up && direction = Down) ||
-           (snake.Direction = Down && direction = Up) ||
-           (snake.Direction = Left && direction = Right) ||
-           (snake.Direction = Right && direction = Left) then
+        if (snake.CurrentDirection = Up && direction = Down) ||
+           (snake.CurrentDirection = Down && direction = Up) ||
+           (snake.CurrentDirection = Left && direction = Right) ||
+           (snake.CurrentDirection = Right && direction = Left) then
             snake
         else
-            { snake with Direction = direction }
+            { snake with DirectionChangesTo = direction }
         
     let Init x y dir=
         let pos = { X = x; Y = y }
-        { Head = pos; Tail = []; Direction = dir; Growth = 5 }
+        { Head = pos; Tail = []; CurrentDirection = dir; DirectionChangesTo = dir; Growth = 5 }
         
     let IsCollisionWithBorder (snake:Snake) =
         let head = snake.Head
