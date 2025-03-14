@@ -12,8 +12,12 @@ type Game = {
     Player2Alive: bool
 }
 
+type PlayMode =
+    | SinglePlayer
+    | MultiPlayer
+
 type Page =
-    | SelectPlayers
+    | SelectPlayers of PlayMode 
     | Game of Game
     | GameOver of Game * int
 
@@ -36,7 +40,7 @@ let init () =
       
       Beat = false
       
-      CurrentPage = SelectPlayers    
+      CurrentPage = SelectPlayers MultiPlayer    
     }
 
 type GamepadButton =

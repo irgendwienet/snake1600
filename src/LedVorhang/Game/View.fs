@@ -57,9 +57,32 @@ let printText font (text:string) color x y =
     
     ()
 
-let viewSelectPlayers () =
-    showCrossHair Color.Green
-    
+let viewSelectPlayers mode =
+    printText
+        Font.Font_7x9
+        "1"
+        Color.Blue
+        8
+        15
+
+    printText
+        Font.Font_7x9
+        "2"
+        Color.Blue
+        25
+        15
+        
+    match mode with
+    | SinglePlayer -> 
+        drawBorder
+            7 14
+            9 10
+            Color.Green
+    | MultiPlayer ->        
+        drawBorder
+            24 14
+            9 10 
+            Color.Green
 
 let viewGame (game:Game) =
     game.Player1 |> showSnake Color.Red Color.Yellow
@@ -99,16 +122,13 @@ let viewScore (game:Game) beat =
             28 10
             Color.Yellow
 
-
-
-
 let view (display:IDisplay) (model:Model) dispatch =
         
     clear()       
     showOuterBorder()
     
     match model.CurrentPage with
-    | SelectPlayers -> viewSelectPlayers ()
+    | SelectPlayers mode -> viewSelectPlayers mode
     | Game game -> viewGame game
     | GameOver (game, waitingTime) when waitingTime > 0
          -> viewGameOver game model.Beat

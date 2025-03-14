@@ -3,8 +3,16 @@
 open Elmish
 open Game.Model
        
-let selectPlayersUpdate msg model =
+let selectPlayersUpdate msg model mode =
     match msg with
+    | Gamepad1DirectionPressed Right
+    | Gamepad2DirectionPressed Right ->
+        { model with CurrentPage = SelectPlayers MultiPlayer }, Cmd.none
+    
+    | Gamepad1DirectionPressed Left // TODO mirror?
+    | Gamepad2DirectionPressed Left ->
+        { model with CurrentPage = SelectPlayers SinglePlayer }, Cmd.none
+
     | Gamepad1ButtonPressed Start 
     | Gamepad2ButtonPressed Start ->
         let game = {
@@ -32,7 +40,7 @@ let gameOverUpdate msg model game waitingtime =
         match msg with
         | Gamepad1ButtonPressed _ 
         | Gamepad2ButtonPressed _ ->
-            { model with CurrentPage = SelectPlayers }, Cmd.none
+            { model with CurrentPage = SelectPlayers MultiPlayer }, Cmd.none
         | _ ->
             model, Cmd.none
         
@@ -51,6 +59,6 @@ let update msg (model:Model) =
          
     | _ ->
         match model.CurrentPage with
-        | SelectPlayers -> selectPlayersUpdate msg model
+        | SelectPlayers mode -> selectPlayersUpdate msg model mode
         | Game game -> GameState.gameUpdate msg model game
         | GameOver (game, waitingTime) -> gameOverUpdate msg model game waitingTime
