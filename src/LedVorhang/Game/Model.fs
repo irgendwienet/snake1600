@@ -1,20 +1,22 @@
 ﻿module Game.Model
 
-type Game = {
-    Food: Position
-    
-    Player1: Snake
-    Player1Points: int
-    Player1Alive: bool
-            
-    Player2: Snake
-    Player2Points: int
-    Player2Alive: bool
-}
-
 type PlayMode =
     | SinglePlayer
     | MultiPlayer
+
+type Game = {
+    Mode: PlayMode
+    
+    Food: Position 
+       
+    Player1: Snake option
+    Player1Points: int
+    Player1Alive: bool
+            
+    Player2: Snake option
+    Player2Points: int
+    Player2Alive: bool
+}
 
 type Page =
     | SelectPlayers of PlayMode 

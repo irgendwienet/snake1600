@@ -1,5 +1,6 @@
 ﻿module Game.State
 
+open System
 open Elmish
 open Game.Model
        
@@ -15,17 +16,37 @@ let selectPlayersUpdate msg model mode =
 
     | Gamepad1ButtonPressed Start 
     | Gamepad2ButtonPressed Start ->
-        let game = {
-            Food = { X=0; Y=0 }
-            
-            Player1 = initSnake1()
-            Player1Points = 0
-            Player1Alive = true
-            
-            Player2 = initSnake2()
-            Player2Points = 0
-            Player2Alive = true    
-        }
+        
+        
+        let game =
+            match mode with
+            | SinglePlayer ->
+                {
+                    Food = { X=0; Y=0 }
+                    Mode = SinglePlayer
+                    
+                    Player1 = Some (initSnake1())
+                    Player1Points = 0
+                    Player1Alive = true
+                    
+                    Player2 = None
+                    Player2Points = 0
+                    Player2Alive = false
+                }
+            | MultiPlayer ->
+                {
+                    Food = { X=0; Y=0 }
+                    Mode = MultiPlayer
+                    
+                    Player1 = Some (initSnake1())
+                    Player1Points = 0
+                    Player1Alive = true
+                    
+                    Player2 = Some (initSnake2())
+                    Player2Points = 0
+                    Player2Alive = true    
+                }
+        
         
         let game = { game with Food = GameState.newFoodPos game }
         
@@ -40,7 +61,7 @@ let gameOverUpdate msg model game waitingtime =
         match msg with
         | Gamepad1ButtonPressed _ 
         | Gamepad2ButtonPressed _ ->
-            { model with CurrentPage = SelectPlayers MultiPlayer }, Cmd.none
+            { model with CurrentPage = SelectPlayers game.Mode }, Cmd.none
         | _ ->
             model, Cmd.none
         

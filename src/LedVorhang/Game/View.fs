@@ -85,8 +85,8 @@ let viewSelectPlayers mode =
             Color.Green
 
 let viewGame (game:Game) =
-    game.Player1 |> showSnake Color.Red Color.Yellow
-    game.Player2 |> showSnake Color.Blue Color.DarkOliveGreen
+    game.Player1 |> Option.iter (showSnake Color.Red Color.Yellow)
+    game.Player2 |> Option.iter (showSnake Color.Blue Color.DarkOliveGreen)
     game.Food |> showFood   
 
 let viewGameOver (game:Game) beat =
@@ -108,19 +108,19 @@ let viewScore (game:Game) beat =
             28 10
             Color.Yellow
 
+    if game.Mode = MultiPlayer then        
+        printText
+            Font.Font_7x9
+            $"{game.Player2Points,3}"
+            Color.Blue
+            7
+            20
 
-    printText
-        Font.Font_7x9
-        $"{game.Player2Points,3}"
-        Color.Blue
-        7
-        20
-
-    if game.Player2Points >= game.Player1Points && beat then
-        drawBorder
-            6 19
-            28 10
-            Color.Yellow
+        if game.Player2Points >= game.Player1Points && beat then
+            drawBorder
+                6 19
+                28 10
+                Color.Yellow
 
 let view (display:IDisplay) (model:Model) dispatch =
         

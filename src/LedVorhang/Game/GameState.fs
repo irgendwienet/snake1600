@@ -9,12 +9,13 @@ let rnd = Random()
 let rec newFoodPos (game:Game) =
     let p = { X = rnd.Next(1, 39); Y = rnd.Next(1, 39) }
     
-    if p |> Snake.IsPartOfSnake game.Player1 then
+    if (game.Player1 |> Option.map (Snake.IsPartOfSnake p) |> Option.defaultValue false)
+        || (game.Player2 |> Option.map (Snake.IsPartOfSnake p) |> Option.defaultValue false) then
         newFoodPos game
     else
         p
         
-let moveSnake gamepadDirectionButton (snake:Snake)    =
+let moveSnake gamepadDirectionButton (snake:Snake Option)    =
     let f =
         match gamepadDirectionButton with
         | Up -> Snake.ChangeDirection Direction.Up
@@ -22,7 +23,13 @@ let moveSnake gamepadDirectionButton (snake:Snake)    =
         | Left -> Snake.ChangeDirection Direction.Left        
         | Right -> Snake.ChangeDirection Direction.Right
                 
-    f snake
+    snake |> Option.map f 
+    
+let move (snake: Snake Option) isAlive =    
+    if isAlive then
+        snake |> Option.map Snake.Move
+    else
+        snake
     
 let gameUpdate msg (model:Model) (game:Game) =
     match msg with
@@ -35,8 +42,8 @@ let gameUpdate msg (model:Model) (game:Game) =
         { model with CurrentPage = Game g }, Cmd.none
 
     | Tick ->
-        let newPlayer1 = if game.Player1Alive then game.Player1 |> Snake.Move else game.Player1
-        let newPlayer2 = if game.Player2Alive then game.Player2 |> Snake.Move else game.Player2
+        let newPlayer1 = move game.Player1 game.Player1Alive
+        let newPlayer2 = move game.Player2 game.Player2Alive
         
         let player1Dies =
             Snake.IsCollisionWithBorder newPlayer1
@@ -63,19 +70,23 @@ let gameUpdate msg (model:Model) (game:Game) =
                         Player2 = if game.Player2Alive then newPlayer2 else game.Player2 }
 
         let game =          
-            if game.Player1Alive && game.Player1.Head = game.Food then
+            if game.Player1Alive && game.Player1.IsSome && game.Player1.Value.Head = game.Food then
                 let newFood = newFoodPos game
                 
+                let player1 = {game.Player1.Value with Growth = game.Player1.Value.Growth + 1}
+                
                 { game with
-                    Player1.Growth = game.Player1.Growth + 1
+                    Player1 = Some player1
                     Player1Points = game.Player1Points + 1
                     Food = newFood }
-            elif game.Player2Alive && game.Player2.Head = game.Food then
+            elif game.Player2Alive && game.Player2.IsSome && game.Player2.Value.Head = game.Food then
                 let newFood = newFoodPos game
+
+                let player2 = {game.Player2.Value with Growth = game.Player2.Value.Growth + 1}
                 
                 { game with
-                    Player2.Growth = game.Player2.Growth + 1
-                    Player2Points = game.Player2Points + 1
+                    Player2 = Some player2
+                    Player2Points = game.Player1Points + 1
                     Food = newFood }
             else
                 game

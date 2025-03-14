@@ -56,19 +56,28 @@ module Snake =
         let pos = { X = x; Y = y }
         { Head = pos; Tail = []; CurrentDirection = dir; DirectionChangesTo = dir; Growth = 5 }
         
-    let IsCollisionWithBorder (snake:Snake) =
-        let head = snake.Head
-        head.X < 1 || head.X >= 39 || head.Y < 1 || head.Y >= 39
+    let IsCollisionWithBorder (snake:Snake option) =
+        match snake with
+        | None -> false
+        | Some snake ->
+            let head = snake.Head
+            head.X < 1 || head.X >= 39 || head.Y < 1 || head.Y >= 39
         
-    let IsCollisionWithTail (snake:Snake) =
-        let head = snake.Head
-        List.exists (fun pos -> pos.X = head.X && pos.Y = head.Y) snake.Tail
+    let IsCollisionWithTail (snake:Snake option) =
+        match snake with
+        | None -> false
+        | Some snake ->
+            let head = snake.Head
+            List.exists (fun pos -> pos.X = head.X && pos.Y = head.Y) snake.Tail
         
-    let IsHeadCollisionWithAnother (snakeWithHead:Snake) (otherSnake:Snake) =
-        let head = snakeWithHead.Head
+    let IsHeadCollisionWithAnother (snakeWithHead:Snake option) (otherSnake:Snake option) =
+        match snakeWithHead, otherSnake with
+        | Some snakeWithHead, Some otherSnake ->
+            let head = snakeWithHead.Head
+            
+            head.X = otherSnake.Head.X && head.Y = otherSnake.Head.Y
+            || List.exists (fun pos -> pos.X = head.X && pos.Y = head.Y) otherSnake.Tail
+        | _ -> false
         
-        head.X = otherSnake.Head.X && head.Y = otherSnake.Head.Y
-        || List.exists (fun pos -> pos.X = head.X && pos.Y = head.Y) otherSnake.Tail
-        
-    let IsPartOfSnake (snake:Snake) (pos:Position) =
+    let IsPartOfSnake (pos:Position) (snake:Snake) =
         pos.X = snake.Head.X && pos.Y = snake.Head.Y || List.exists (fun p -> p.X = pos.X && p.Y = pos.Y) snake.Tail
