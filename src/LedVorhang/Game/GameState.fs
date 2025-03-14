@@ -91,7 +91,7 @@ let gameUpdate msg (model:Model) (game:Game) =
         { model with CurrentPage = Game game }, cmd
 
     | ItsGameOver ->
-        { model with CurrentPage = GameOver game }, Cmd.none
+        { model with CurrentPage = GameOver (game, 25) }, Cmd.none
         
     | _ ->
         model, Cmd.none

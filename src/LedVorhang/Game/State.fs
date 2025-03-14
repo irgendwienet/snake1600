@@ -25,15 +25,23 @@ let selectPlayersUpdate msg model =
     | _ ->
         model, Cmd.none
 
-let gameOverUpdate msg model score =
-    match msg with
-    | Gamepad1ButtonPressed _ 
-    | Gamepad2ButtonPressed _ ->
-        { model with CurrentPage = SelectPlayers }, Cmd.none
-    | _ ->
-        model, Cmd.none
+let gameOverUpdate msg model game waitingtime =
+    if waitingtime > 0 then
+        { model with CurrentPage = GameOver (game, waitingtime - 1) }, Cmd.none
+    else
+        match msg with
+        | Gamepad1ButtonPressed _ 
+        | Gamepad2ButtonPressed _ ->
+            { model with CurrentPage = SelectPlayers }, Cmd.none
+        | _ ->
+            model, Cmd.none
         
 let update msg (model:Model) =
+    let model = 
+        match msg with
+        | Tick -> { model with Beat = not model.Beat }
+        | _ -> model
+     
     match msg with
     // Das ist unabhängig der Page
     | Gamepad1ButtonPressed Dragon ->
@@ -45,4 +53,4 @@ let update msg (model:Model) =
         match model.CurrentPage with
         | SelectPlayers -> selectPlayersUpdate msg model
         | Game game -> GameState.gameUpdate msg model game
-        | GameOver score -> gameOverUpdate msg model score
+        | GameOver (game, waitingTime) -> gameOverUpdate msg model game waitingTime

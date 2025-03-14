@@ -6,6 +6,8 @@ open Game.Model
 open HardwareLayer
 open HardwareLayer.Fonts
 
+let tick() = DateTime.Now.Microsecond % 100 > 50
+
 let image = LedImage(40,40)
 
 let setPixel (x:int) (y:int) (color:Color) = image.SetPixel(x, y, color)    
@@ -18,14 +20,17 @@ let showSnake headColor tailColor (snake:Snake)=
 let showFood (p:Position) =
     setPixel p.X p.Y Color.Green
 
-let showOuterBorder () =
-    for x in 0..39 do
-        setPixel x 0 Color.White
-        setPixel x 39 Color.White
+let drawBorder y x heigth width color =
+    for i in 0 .. width do
+        setPixel (x+i) y color
+        setPixel (x+i) (y+heigth) color
     
-    for y in 0..39 do
-        setPixel 0 y Color.White
-        setPixel 39 y Color.White
+    for i in 0 .. heigth do 
+        setPixel x (y+i) color
+        setPixel (x+width) (y+i) color
+
+let showOuterBorder () =
+    drawBorder 0 0 39 39 Color.White
 
 let showCrossHair color =
     for i in 0..10 do
@@ -45,7 +50,7 @@ let printChar font ch color x y =
 let printText font (text:string) color x y =
     let _, width = Fonts.GetSize(font).ToTuple()
     
-    let mutable i = -1
+    let mutable i = -1  
     for ch in text do
         i <- i + 1
         printChar font ch color (x + i * width) y
@@ -61,12 +66,43 @@ let viewGame (game:Game) =
     game.Player2 |> showSnake Color.Blue Color.DarkOliveGreen
     game.Food |> showFood   
 
-let viewGameOver (game:Game) =
+let viewGameOver (game:Game) beat =
     viewGame game
-    showCrossHair Color.Red
+    
+    showCrossHair (if beat then Color.Red else Color.Yellow)
+    
+let viewScore (game:Game) beat =
+    printText
+        Font.Font_7x9
+        $"{game.Player1Points,3}"
+        Color.Red
+        7
+        5
+
+    if game.Player1Points >= game.Player2Points && beat then       
+        drawBorder
+            6 4
+            28 10
+            Color.Yellow
+
+
+    printText
+        Font.Font_7x9
+        $"{game.Player2Points,3}"
+        Color.Blue
+        7
+        20
+
+    if game.Player2Points >= game.Player1Points && beat then
+        drawBorder
+            6 19
+            28 10
+            Color.Yellow
+
+
+
 
 let view (display:IDisplay) (model:Model) dispatch =
-
         
     clear()       
     showOuterBorder()
@@ -74,6 +110,9 @@ let view (display:IDisplay) (model:Model) dispatch =
     match model.CurrentPage with
     | SelectPlayers -> viewSelectPlayers ()
     | Game game -> viewGame game
-    | GameOver game -> viewGameOver game
+    | GameOver (game, waitingTime) when waitingTime > 0
+         -> viewGameOver game model.Beat
+    | GameOver (game, _)
+         -> viewScore game model.Beat
     
     display.Update image

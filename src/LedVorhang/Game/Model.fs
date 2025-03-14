@@ -15,11 +15,13 @@ type Game = {
 type Page =
     | SelectPlayers
     | Game of Game
-    | GameOver of Game
+    | GameOver of Game * int
 
 type Model = {
     Player1ControlerMirrored: bool
     Player2ControlerMirrored: bool
+        
+    Beat: bool
         
     CurrentPage: Page  
 }
@@ -32,7 +34,9 @@ let init () =
       Player1ControlerMirrored = false
       Player2ControlerMirrored = false
       
-      CurrentPage = SelectPlayers
+      Beat = false
+      
+      CurrentPage = SelectPlayers    
     }
 
 type GamepadButton =
