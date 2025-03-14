@@ -4,6 +4,7 @@ open System
 open System.Drawing
 open Game.Model
 open HardwareLayer
+open HardwareLayer.Fonts
 
 let image = LedImage(40,40)
 
@@ -31,13 +32,34 @@ let showCrossHair color =
         setPixel (15+i) (15+i) color
         setPixel (15+i) (25-i) color
 
+let printChar font ch color x y =
+    let data, width = Fonts.Get(font, ch).ToTuple()
+    
+    let mutable j = -1
+    for row in data do
+        j <- j + 1
+        for i in  [0 .. width-1] do
+            if row &&& (1uy <<< (7-i)) > 0uy then
+                setPixel (y+j) (x+i)  color
+                
+let printText font (text:string) color x y =
+    let _, width = Fonts.GetSize(font).ToTuple()
+    
+    let mutable i = -1
+    for ch in text do
+        i <- i + 1
+        printChar font ch color (x + i * width) y
+    
+    ()
+
 let viewSelectPlayers () =
     showCrossHair Color.Green
+    
 
 let viewGame (game:Game) =
     game.Player1 |> showSnake Color.Red Color.Yellow
     game.Player2 |> showSnake Color.Blue Color.DarkOliveGreen
-    game.Food |> showFood
+    game.Food |> showFood   
 
 let viewGameOver (game:Game) =
     viewGame game
