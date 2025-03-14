@@ -9,7 +9,7 @@ let selectPlayersUpdate msg model mode =
     | Gamepad2DirectionPressed Right ->
         { model with CurrentPage = SelectPlayers MultiPlayer }, Cmd.none
     
-    | Gamepad1DirectionPressed Left // TODO mirror?
+    | Gamepad1DirectionPressed Left
     | Gamepad2DirectionPressed Left ->
         { model with CurrentPage = SelectPlayers SinglePlayer }, Cmd.none
 
@@ -49,6 +49,14 @@ let update msg (model:Model) =
         match msg with
         | Tick -> { model with Beat = not model.Beat }
         | _ -> model
+    
+    let msg = 
+        match msg with
+        | Gamepad1DirectionPressed Left when model.Player1ControlerMirrored -> Gamepad1DirectionPressed Right
+        | Gamepad1DirectionPressed Right when model.Player1ControlerMirrored -> Gamepad1DirectionPressed Left
+        | Gamepad2DirectionPressed Left when model.Player2ControlerMirrored -> Gamepad2DirectionPressed Right
+        | Gamepad2DirectionPressed Right when model.Player2ControlerMirrored -> Gamepad2DirectionPressed Left
+        | _ -> msg
      
     match msg with
     // Das ist unabhängig der Page

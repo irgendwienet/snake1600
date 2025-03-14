@@ -14,32 +14,24 @@ let rec newFoodPos (game:Game) =
     else
         p
         
-let moveSnake gamepadDirectionButton mirrored (snake:Snake)    =
+let moveSnake gamepadDirectionButton (snake:Snake)    =
     let f =
         match gamepadDirectionButton with
         | Up -> Snake.ChangeDirection Direction.Up
         | Down -> Snake.ChangeDirection Direction.Down
-        | Left ->
-            if mirrored then
-                Snake.ChangeDirection Direction.Right
-            else
-                Snake.ChangeDirection Direction.Left        
-        | Right ->
-            if mirrored then
-                Snake.ChangeDirection Direction.Left
-            else
-                Snake.ChangeDirection Direction.Right
+        | Left -> Snake.ChangeDirection Direction.Left        
+        | Right -> Snake.ChangeDirection Direction.Right
                 
     f snake
     
 let gameUpdate msg (model:Model) (game:Game) =
     match msg with
     | Gamepad1DirectionPressed direction ->
-        let g = { game with Player1 = moveSnake direction model.Player1ControlerMirrored game.Player1 }
+        let g = { game with Player1 = moveSnake direction game.Player1 }
         { model with CurrentPage = Game g }, Cmd.none
 
     | Gamepad2DirectionPressed direction ->
-        let g = { game with Player2 = moveSnake direction model.Player1ControlerMirrored game.Player2 }
+        let g = { game with Player2 = moveSnake direction game.Player2 }
         { model with CurrentPage = Game g }, Cmd.none
 
     | Tick ->
