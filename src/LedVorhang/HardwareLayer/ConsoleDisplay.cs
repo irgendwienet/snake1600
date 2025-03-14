@@ -56,7 +56,7 @@ public class ConsoleDisplay : IDisplay
         {
             for (int x = 0; x < image.Width; x++)
             {
-                var color = image.GetPixel(x, y);
+                var color = image.GetPixel(y, x);
                     
                 if (_useColors)
                 {

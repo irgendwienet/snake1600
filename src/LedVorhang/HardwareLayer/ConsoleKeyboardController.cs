@@ -1,31 +1,26 @@
+using Timer = System.Timers.Timer;
+
 namespace HardwareLayer;
 
 public class ConsoleKeyboardController : IDisposable
 {
-    private readonly Thread _keyboardThread;
-    private volatile bool _running = true;
-
+    private readonly Timer _timer; 
+    
     public event EventHandler<ConsoleKeyboardEventArgs>? KeyPressed;
 
     public ConsoleKeyboardController()
     {
-        _keyboardThread = new Thread(KeyboardLoop)
-        {
-            IsBackground = true
-        };
-        _keyboardThread.Start();
+        _timer = new Timer(1.0);
+        _timer.Elapsed += (sender, args) => OnTick();
+        _timer.Start();
     }
 
-    private void KeyboardLoop()
+    private void OnTick()
     {
-        while (_running)
+        if (Console.KeyAvailable)
         {
-            if (Console.KeyAvailable)
-            {
-                var key = Console.ReadKey(intercept: true);
-                OnKeyPressed(key.Key);
-            }
-            Thread.Sleep(10); // Prevent high CPU usage
+            var key = Console.ReadKey(intercept: true);
+            OnKeyPressed(key.Key);
         }
     }
 
@@ -36,7 +31,6 @@ public class ConsoleKeyboardController : IDisposable
 
     public void Dispose()
     {
-        _running = false;
-        _keyboardThread.Join(100); // Wait for thread to finish
+        _timer?.Dispose();
     }
 }
