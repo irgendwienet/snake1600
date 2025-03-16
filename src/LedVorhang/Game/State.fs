@@ -6,14 +6,23 @@ open Game.Model
        
 let selectPlayersUpdate msg model mode =
     match msg with
+    | Gamepad1DirectionPressed Left when model.Player1ControlerMirrored ->
+        { model with CurrentPage = SelectPlayers MultiPlayer }, Cmd.none
+    | Gamepad2DirectionPressed Left when model.Player2ControlerMirrored ->
+        { model with CurrentPage = SelectPlayers MultiPlayer }, Cmd.none
+    
+    | Gamepad1DirectionPressed Right when model.Player1ControlerMirrored ->
+        { model with CurrentPage = SelectPlayers SinglePlayer }, Cmd.none
+    | Gamepad2DirectionPressed Right when model.Player2ControlerMirrored ->
+        { model with CurrentPage = SelectPlayers SinglePlayer }, Cmd.none
+
     | Gamepad1DirectionPressed Right
     | Gamepad2DirectionPressed Right ->
         { model with CurrentPage = SelectPlayers MultiPlayer }, Cmd.none
-    
     | Gamepad1DirectionPressed Left
     | Gamepad2DirectionPressed Left ->
-        { model with CurrentPage = SelectPlayers SinglePlayer }, Cmd.none
-
+            { model with CurrentPage = SelectPlayers SinglePlayer }, Cmd.none
+    
     | Gamepad1ButtonPressed Start 
     | Gamepad2ButtonPressed Start ->
         
@@ -66,11 +75,6 @@ let gameOverUpdate msg model game waitingtime =
             model, Cmd.none
         
 let update msg (model:Model) =
-    let model = 
-        match msg with
-        | Tick -> { model with Beat = not model.Beat }
-        | _ -> model
-    
     let msg = 
         match msg with
         | Gamepad1DirectionPressed Left when model.Player1ControlerMirrored -> Gamepad1DirectionPressed Right
@@ -78,13 +82,19 @@ let update msg (model:Model) =
         | Gamepad2DirectionPressed Left when model.Player2ControlerMirrored -> Gamepad2DirectionPressed Right
         | Gamepad2DirectionPressed Right when model.Player2ControlerMirrored -> Gamepad2DirectionPressed Left
         | _ -> msg
-     
+
+    let model = 
+        match msg with
+        | Tick -> { model with Beat = not model.Beat; ViewNeedsRefresh = true }
+        | _ -> model
+         
     match msg with
     // Das ist unabhängig der Page
     | Gamepad1ButtonPressed Dragon ->
          {model with Player1ControlerMirrored = not model.Player1ControlerMirrored}, Cmd.none
     | Gamepad2ButtonPressed Dragon ->
          {model with Player2ControlerMirrored = not model.Player2ControlerMirrored}, Cmd.none
+    | ViewRefreshed -> { model with ViewNeedsRefresh = false }, Cmd.none
          
     | _ ->
         match model.CurrentPage with

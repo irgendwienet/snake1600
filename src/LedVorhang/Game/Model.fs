@@ -28,6 +28,7 @@ type Model = {
     Player2ControlerMirrored: bool
         
     Beat: bool
+    ViewNeedsRefresh: bool
         
     CurrentPage: Page  
 }
@@ -41,6 +42,7 @@ let init () =
       Player2ControlerMirrored = false
       
       Beat = false
+      ViewNeedsRefresh = true
       
       CurrentPage = SelectPlayers MultiPlayer    
     }
@@ -69,5 +71,6 @@ type Msg =
     | Gamepad2DirectionPressed of GamepadDirectionButton
     
     | Tick
+    | ViewRefreshed
     
     | ItsGameOver

@@ -6,9 +6,12 @@ open Game.Model
 open HardwareLayer
 open HardwareLayer.Fonts
 
+let LightYellow=Color.FromArgb(90,90,0)    
+let LowWhite = Color.FromArgb(180, 180, 180)
+
 let tick() = DateTime.Now.Microsecond % 100 > 50
 
-let image = LedImage(40,40)
+let image = LedImage(40,40, true)
 
 let setPixel (x:int) (y:int) (color:Color) = image.SetPixel(x, y, color)    
 let clear () = image.Clear()
@@ -30,7 +33,7 @@ let drawBorder y x heigth width color =
         setPixel (x+width) (y+i) color
 
 let showOuterBorder () =
-    drawBorder 0 0 39 39 Color.White
+    drawBorder 0 0 39 39 LowWhite
 
 let showCrossHair color =
     for i in 0..10 do
@@ -106,7 +109,7 @@ let viewScore (game:Game) beat =
         drawBorder
             6 4
             28 10
-            Color.Yellow
+            LightYellow
 
     if game.Mode = MultiPlayer then        
         printText
@@ -114,25 +117,31 @@ let viewScore (game:Game) beat =
             $"{game.Player2Points,3}"
             Color.Blue
             7
-            20
+            21
 
         if game.Player2Points >= game.Player1Points && beat then
             drawBorder
-                6 19
+                6 20
                 28 10
-                Color.Yellow
+                LightYellow
 
 let view (display:IDisplay) (model:Model) dispatch =
         
-    clear()       
-    showOuterBorder()
+    if model.ViewNeedsRefresh then
+        clear()       
+        showOuterBorder()
+        
+        match model.CurrentPage with
+        | SelectPlayers mode -> viewSelectPlayers mode
+        | Game game -> viewGame game
+        | GameOver (game, waitingTime) when waitingTime > 0
+             -> viewGameOver game model.Beat
+        | GameOver (game, _)
+             -> viewScore game model.Beat
+        
+        display.Update image
+
+        ViewRefreshed |> dispatch
     
-    match model.CurrentPage with
-    | SelectPlayers mode -> viewSelectPlayers mode
-    | Game game -> viewGame game
-    | GameOver (game, waitingTime) when waitingTime > 0
-         -> viewGameOver game model.Beat
-    | GameOver (game, _)
-         -> viewScore game model.Beat
-    
-    display.Update image
+    else
+        ()

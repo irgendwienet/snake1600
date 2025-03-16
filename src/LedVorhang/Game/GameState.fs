@@ -86,7 +86,7 @@ let gameUpdate msg (model:Model) (game:Game) =
                 
                 { game with
                     Player2 = Some player2
-                    Player2Points = game.Player1Points + 1
+                    Player2Points = game.Player2Points + 1
                     Food = newFood }
             else
                 game
