@@ -37,10 +37,10 @@ type Model = {
 let initSnake1 () = Snake.Init 10 20 Direction.Up
 let initSnake2 () = Snake.Init 30 20 Direction.Down
 
-let init () =
+let init (controlerMirrored) =
     {
-      Player1ControlerMirrored = false
-      Player2ControlerMirrored = false
+      Player1ControlerMirrored = controlerMirrored
+      Player2ControlerMirrored = controlerMirrored
       
       Beat = false
       ViewNeedsRefresh = true

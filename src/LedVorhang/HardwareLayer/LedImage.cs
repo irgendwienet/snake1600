@@ -7,14 +7,12 @@ namespace HardwareLayer;
 /// </summary>
 public class LedImage
 {
-    private readonly bool _isMirrored;
     public int Width { get; }
     public int Height { get; }
     public Color[,] Data { get; }
 
-    public LedImage(int width, int height, bool isMirrored = false)
+    public LedImage(int width, int height)
     {
-        _isMirrored = isMirrored;
         Width = width;
         Height = height;
         Data = new Color[Width, Height];
@@ -47,7 +45,7 @@ public class LedImage
         Data[x, y] = c;
     }
 
-    internal Color GetPixel(int x, int y)
+    internal Color GetPixel(int x, int y, bool isMirrored)
     {
         if (x < 0 || x >= Width)
         {
@@ -59,7 +57,7 @@ public class LedImage
             throw new ArgumentOutOfRangeException(nameof(y));
         }
 
-        if (_isMirrored)
+        if (isMirrored)
         {
             return Data[x, Height - y -1];
         }
@@ -75,7 +73,7 @@ public class LedImage
     /// <returns>A new LedImage with the same dimensions and pixel data</returns>
     public LedImage Clone()
     {
-        LedImage clone = new LedImage(Width, Height, _isMirrored);
+        LedImage clone = new LedImage(Width, Height);
         
         for (int y = 0; y < Height; y++)
         {

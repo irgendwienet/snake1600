@@ -31,13 +31,13 @@ let createConsoleDisolay () =
 if RuntimeInformation.IsOSPlatform(OSPlatform.Windows) then
    let display = createConsoleDisolay()
    
-   Program.mkProgram (fun _ -> init(), Cmd.none) State.update (View.view display)
+   Program.mkProgram (fun _ -> init true, Cmd.none) State.update (View.view display)
     |> Program.withSubscription Subscription.WindowsPc
     |> Program.run
 else
     let display = createLedDisplay()
 
-    Program.mkProgram (fun _ -> init(), Cmd.none) State.update (View.view display)
+    Program.mkProgram (fun _ -> init false, Cmd.none) State.update (View.view display)
     |> Program.withSubscription Subscription.RaspberryPi
     |> Program.run
 

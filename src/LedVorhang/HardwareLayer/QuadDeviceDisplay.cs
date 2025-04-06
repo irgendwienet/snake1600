@@ -18,6 +18,8 @@ public class QuadDeviceDisplay : IDisplay
     private bool _dirtyB = true;
     private bool _dirtyC = true;
     private bool _dirtyD = true;
+    
+    public bool IsMirrored { get; set; } = true;
 
     public QuadDeviceDisplay(Ws28xxVorhang a, Ws28xxVorhang b, Ws28xxVorhang c, Ws28xxVorhang d)
     {
@@ -98,7 +100,7 @@ public class QuadDeviceDisplay : IDisplay
             {
                 for (int x = startX; x < endX; x++)
                 {
-                    if (_lastImage!.GetPixel(x, y) != image.GetPixel(x, y))
+                    if (_lastImage!.GetPixel(x, y, IsMirrored) != image.GetPixel(x, y, IsMirrored))
                     {
                         return true;
                     }
@@ -142,7 +144,7 @@ public class QuadDeviceDisplay : IDisplay
             for (int x = 0; x < _subWidth; x++)
             {
                 int deviceY = flipY ? _subHeight - y - 1 : y;
-                device.Image.SetPixel(x, deviceY, image.GetPixel(x + offsetX, y + offsetY));
+                device.Image.SetPixel(x, deviceY, image.GetPixel(x + offsetX, y + offsetY, IsMirrored));
             }
         }
     }

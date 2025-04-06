@@ -11,7 +11,7 @@ let LowWhite = Color.FromArgb(180, 180, 180)
 
 let tick() = DateTime.Now.Microsecond % 100 > 50
 
-let image = LedImage(40,40, true)
+let image = LedImage(40,40)
 
 let setPixel (x:int) (y:int) (color:Color) = image.SetPixel(x, y, color)    
 let clear () = image.Clear()

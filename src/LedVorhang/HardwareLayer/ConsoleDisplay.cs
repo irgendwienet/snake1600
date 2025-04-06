@@ -10,6 +10,7 @@ public class ConsoleDisplay : IDisplay
     private LedImage? _lastImage;
     private readonly bool _useColors;
     private readonly char _blockChar = '█'; // Unicode block character
+    private const bool _isMirrored = false;
         
     public ConsoleDisplay(bool useColors = true)
     {
@@ -39,7 +40,7 @@ public class ConsoleDisplay : IDisplay
         {
             for (int x = 0; x < image.Width; x++)
             {
-                if (_lastImage!.GetPixel(x, y) != image.GetPixel(x, y))
+                if (_lastImage!.GetPixel(x, y, _isMirrored) != image.GetPixel(x, y, _isMirrored))
                 {
                     return true;
                 }
@@ -56,7 +57,7 @@ public class ConsoleDisplay : IDisplay
         {
             for (int x = 0; x < image.Width; x++)
             {
-                var color = image.GetPixel(y, x);
+                var color = image.GetPixel(y, x, _isMirrored);
                     
                 if (_useColors)
                 {
