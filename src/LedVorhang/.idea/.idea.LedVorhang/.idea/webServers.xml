@@ -3,7 +3,7 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="3c74fb23-8390-4490-8ded-935e010be8b9" name="raspberryled">
-        <fileTransfer rootFolder="/home/benjamin/rider" accessType="SFTP" host="raspberryled" port="22" sshConfigId="542705ec-b645-4640-8032-7bffee90624c" sshConfig="benjamin@raspberryled:22 password">
+        <fileTransfer rootFolder="/home/benjamin/rider" accessType="SFTP" host="[fe80::a7c:1232:7470:a850%50]" port="22" sshConfigId="b0623535-8df1-4117-bc22-490832f5b6a6" sshConfig="benjamin@[fe80::a7c:1232:7470:a850%50]:22 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

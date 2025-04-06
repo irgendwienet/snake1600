@@ -1,6 +1,5 @@
 ﻿module Program
 
-open System
 open System.Device.Spi
 open System.Runtime.InteropServices
 open Elmish

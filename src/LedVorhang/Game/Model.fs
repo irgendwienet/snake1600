@@ -1,5 +1,7 @@
 ﻿module Game.Model
 
+open System
+
 type PlayMode =
     | SinglePlayer1
     | SinglePlayer2
@@ -37,13 +39,16 @@ type Model = {
     Beat: bool
     ViewNeedsRefresh: bool
         
+    CurrentPageOpenSince: DateTime
     CurrentPage: Page  
 }
 
 let initSnake1 () = Snake.Init 10 20 Direction.Up
 let initSnake2 () = Snake.Init 30 20 Direction.Down
 
-let init (controlerMirrored) =
+let startPage = Text { Text = "Kidspace"; Position = 0}  
+
+let init controlerMirrored =
     {
       Player1ControlerMirrored = controlerMirrored
       Player2ControlerMirrored = controlerMirrored
@@ -51,7 +56,8 @@ let init (controlerMirrored) =
       Beat = false
       ViewNeedsRefresh = true
       
-      CurrentPage = Text { Text = "Kidspace"; Position = 0}  
+      CurrentPageOpenSince = DateTime.Now
+      CurrentPage = startPage  
     }
 
 type GamepadButton =

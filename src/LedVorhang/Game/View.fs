@@ -95,16 +95,21 @@ let viewGameOver (game:Game) beat =
     
     showCrossHair (if beat then Color.Red else Color.Yellow)
     
-let viewScore (game:Game) beat =
+let viewScore (game:Game) beat waitingtime =
+    let beat = if waitingtime > 25 then true else beat
+    
+    
     TextRenderer.printText
         Font.Font_7x9
-        $"{game.Player1Points,3}"
+        (if game.Mode = SinglePlayer2 then $"{game.Player2Points,3}" else $"{game.Player1Points,3}")
         Color.Red
         7
         5
         setPixel
 
-    if game.Player1Points >= game.Player2Points && beat then       
+    if (   (game.Mode = MultiPlayer && game.Player1Points >= game.Player2Points)
+        || (game.Mode = SinglePlayer2 && game.Player2Points > 0)
+        || (game.Mode = SinglePlayer1 && game.Player1Points > 0)) && beat then       
         drawBorder
             6 4
             28 10
@@ -137,8 +142,8 @@ let view (display:IDisplay) (model:Model) dispatch =
         | Game game -> viewGame game
         | GameOver (game, waitingTime) when waitingTime > 0
              -> viewGameOver game model.Beat
-        | GameOver (game, _)
-             -> viewScore game model.Beat
+        | GameOver (game, waitingTime)
+             -> viewScore game model.Beat -waitingTime
         
         display.Update image
 
