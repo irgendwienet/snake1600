@@ -3,15 +3,17 @@
 open System
 open HardwareLayer.Fonts
 
-let printChar font ch color x y setPixel =
-    let data, width = Fonts.Get(font, ch).ToTuple()
-    
+let printIcon data width color x y setPixel =
     let mutable j = -1
     for row in data do
         j <- j + 1
         for i in  [0 .. width-1] do
             if row &&& (1uy <<< (7-i)) > 0uy then
                 setPixel (y+j) (x+i)  color
+                
+let printChar font ch color x y setPixel =
+    let data, width = Fonts.Get(font, ch).ToTuple()
+    printIcon data width color x y setPixel
                 
 let printText font (text:string) color x y  setPixel =
     let _, width = Fonts.GetSize(font).ToTuple()

@@ -40,6 +40,25 @@ let showCrossHair color =
         setPixel (15+i) (15+i) color
         setPixel (15+i) (25-i) color
 
+let viewLogo y x color  =
+    let data = 
+        [|
+            0b00111100uy
+            0b01000010uy
+            0b10000001uy
+            0b10000001uy
+            0b00000001uy
+            0b00000001uy
+            0b11111111uy
+            0b10000001uy
+            0b10100101uy
+            0b10000001uy
+            0b10100101uy
+            0b10011001uy
+            0b10000001uy
+            0b11111111uy |]
+    
+    TextRenderer.printIcon data 8 color x y setPixel
 
 let viewText page =
     let text = page.Text
@@ -54,8 +73,11 @@ let viewText page =
         position
         38
         setPixel
+        
+    viewLogo 15 16 Color.White
 
 let viewSelectPlayers mode =
+    
     TextRenderer.printText
         Font.Font_7x9
         "1"
@@ -94,11 +116,10 @@ let viewGameOver (game:Game) beat =
     viewGame game
     
     showCrossHair (if beat then Color.Red else Color.Yellow)
-    
+             
 let viewScore (game:Game) beat waitingtime =
     let beat = if waitingtime > 25 then true else beat
-    
-    
+        
     TextRenderer.printText
         Font.Font_7x9
         (if game.Mode = SinglePlayer2 then $"{game.Player2Points,3}" else $"{game.Player1Points,3}")

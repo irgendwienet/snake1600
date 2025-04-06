@@ -36,7 +36,7 @@ if RuntimeInformation.IsOSPlatform(OSPlatform.Windows) then
 else
     let display = createLedDisplay()
 
-    Program.mkProgram (fun _ -> init false, Cmd.none) State.update (View.view display)
+    Program.mkProgram (fun _ -> init true, Cmd.none) State.update (View.view display)
     |> Program.withSubscription Subscription.RaspberryPi
     |> Program.run
 
