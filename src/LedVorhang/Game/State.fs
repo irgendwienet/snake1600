@@ -4,6 +4,27 @@ open System
 open Elmish
 open Game.Model
        
+let textUpdate msg model page =       
+    match msg with
+    // AnyKey
+    | Gamepad1ButtonPressed _ 
+    | Gamepad2ButtonPressed _ 
+    | Gamepad1DirectionPressed _ 
+    | Gamepad2DirectionPressed _ ->
+        { model with CurrentPage = SelectPlayers MultiPlayer }, Cmd.none
+        
+    | Tick ->
+        let newPos = 
+            if page.Text.Length * 7 + 38 > page.Position then
+                page.Position + 1
+            else
+                -38
+
+        {model with CurrentPage = Text { page with Position = newPos }}, Cmd.none
+        
+    | _ ->
+        model, Cmd.none
+       
 let selectPlayersUpdate msg model mode =
     match msg with
     | Gamepad1DirectionPressed Left when model.Player1ControlerMirrored ->
@@ -113,3 +134,4 @@ let update msg (model:Model) =
         | SelectPlayers mode -> selectPlayersUpdate msg model mode
         | Game game -> GameState.gameUpdate msg model game
         | GameOver (game, waitingTime) -> gameOverUpdate msg model game waitingTime
+        | Text page -> textUpdate msg model page

@@ -19,7 +19,13 @@ type Game = {
     Player2Alive: bool
 }
 
+type TextPage = {
+    Text: string
+    Position: int
+}
+
 type Page =
+    | Text of TextPage
     | SelectPlayers of PlayMode 
     | Game of Game
     | GameOver of Game * int
@@ -45,7 +51,7 @@ let init (controlerMirrored) =
       Beat = false
       ViewNeedsRefresh = true
       
-      CurrentPage = SelectPlayers MultiPlayer    
+      CurrentPage = Text { Text = "Kidspace"; Position = 0}  
     }
 
 type GamepadButton =

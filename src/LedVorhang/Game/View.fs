@@ -40,40 +40,37 @@ let showCrossHair color =
         setPixel (15+i) (15+i) color
         setPixel (15+i) (25-i) color
 
-let printChar font ch color x y =
-    let data, width = Fonts.Get(font, ch).ToTuple()
-    
-    let mutable j = -1
-    for row in data do
-        j <- j + 1
-        for i in  [0 .. width-1] do
-            if row &&& (1uy <<< (7-i)) > 0uy then
-                setPixel (y+j) (x+i)  color
-                
-let printText font (text:string) color x y =
-    let _, width = Fonts.GetSize(font).ToTuple()
-    
-    let mutable i = -1  
-    for ch in text do
-        i <- i + 1
-        printChar font ch color (x + i * width) y
-    
-    ()
+
+let viewText page =
+    let text = page.Text
+    let position = page.Position
+
+    TextRenderer.printTextOffset
+        Font.Font_7x9
+        text
+        Color.Red
+        1
+        3
+        position
+        38
+        setPixel
 
 let viewSelectPlayers mode =
-    printText
+    TextRenderer.printText
         Font.Font_7x9
         "1"
         Color.Blue
         8
         15
+        setPixel
 
-    printText
+    TextRenderer.printText
         Font.Font_7x9
         "2"
         Color.Blue
         25
         15
+        setPixel
         
     match mode with
     | SinglePlayer1 
@@ -99,12 +96,13 @@ let viewGameOver (game:Game) beat =
     showCrossHair (if beat then Color.Red else Color.Yellow)
     
 let viewScore (game:Game) beat =
-    printText
+    TextRenderer.printText
         Font.Font_7x9
         $"{game.Player1Points,3}"
         Color.Red
         7
         5
+        setPixel
 
     if game.Player1Points >= game.Player2Points && beat then       
         drawBorder
@@ -113,12 +111,13 @@ let viewScore (game:Game) beat =
             LightYellow
 
     if game.Mode = MultiPlayer then        
-        printText
+        TextRenderer.printText
             Font.Font_7x9
             $"{game.Player2Points,3}"
             Color.Blue
             7
             21
+            setPixel
 
         if game.Player2Points >= game.Player1Points && beat then
             drawBorder
@@ -133,6 +132,7 @@ let view (display:IDisplay) (model:Model) dispatch =
         showOuterBorder()
         
         match model.CurrentPage with
+        | Text page -> viewText page
         | SelectPlayers mode -> viewSelectPlayers mode
         | Game game -> viewGame game
         | GameOver (game, waitingTime) when waitingTime > 0
