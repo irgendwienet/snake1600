@@ -76,7 +76,8 @@ let viewSelectPlayers mode =
         15
         
     match mode with
-    | SinglePlayer -> 
+    | SinglePlayer1 
+    | SinglePlayer2 ->
         drawBorder
             7 14
             9 10

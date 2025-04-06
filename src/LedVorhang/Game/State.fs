@@ -12,36 +12,21 @@ let selectPlayersUpdate msg model mode =
         { model with CurrentPage = SelectPlayers MultiPlayer }, Cmd.none
     
     | Gamepad1DirectionPressed Right when model.Player1ControlerMirrored ->
-        { model with CurrentPage = SelectPlayers SinglePlayer }, Cmd.none
+        { model with CurrentPage = SelectPlayers SinglePlayer1 }, Cmd.none
     | Gamepad2DirectionPressed Right when model.Player2ControlerMirrored ->
-        { model with CurrentPage = SelectPlayers SinglePlayer }, Cmd.none
+        { model with CurrentPage = SelectPlayers SinglePlayer1 }, Cmd.none
 
     | Gamepad1DirectionPressed Right
     | Gamepad2DirectionPressed Right ->
         { model with CurrentPage = SelectPlayers MultiPlayer }, Cmd.none
     | Gamepad1DirectionPressed Left
     | Gamepad2DirectionPressed Left ->
-            { model with CurrentPage = SelectPlayers SinglePlayer }, Cmd.none
+            { model with CurrentPage = SelectPlayers SinglePlayer1 }, Cmd.none
     
-    | Gamepad1ButtonPressed Start 
+    | Gamepad1ButtonPressed Start
     | Gamepad2ButtonPressed Start ->
-        
-        
         let game =
             match mode with
-            | SinglePlayer ->
-                {
-                    Food = { X=0; Y=0 }
-                    Mode = SinglePlayer
-                    
-                    Player1 = Some (initSnake1())
-                    Player1Points = 0
-                    Player1Alive = true
-                    
-                    Player2 = None
-                    Player2Points = 0
-                    Player2Alive = false
-                }
             | MultiPlayer ->
                 {
                     Food = { X=0; Y=0 }
@@ -55,6 +40,33 @@ let selectPlayersUpdate msg model mode =
                     Player2Points = 0
                     Player2Alive = true    
                 }
+            | _ when msg = Gamepad1ButtonPressed Start ->
+                {
+                    Food = { X=0; Y=0 }
+                    Mode = SinglePlayer1
+                    
+                    Player1 = Some (initSnake1())
+                    Player1Points = 0
+                    Player1Alive = true
+                    
+                    Player2 = None
+                    Player2Points = 0
+                    Player2Alive = false
+                }
+            | _ when msg = Gamepad2ButtonPressed Start ->
+                {
+                    Food = { X=0; Y=0 }
+                    Mode = SinglePlayer2
+                    
+                    Player1 = None
+                    Player1Points = 0
+                    Player1Alive = false
+                    
+                    Player2 = Some (initSnake1())
+                    Player2Points = 0
+                    Player2Alive = true
+                }
+            | _ -> failwith "Invalid mode"
         
         
         let game = { game with Food = GameState.newFoodPos game }

@@ -1,7 +1,8 @@
 ﻿module Game.Model
 
 type PlayMode =
-    | SinglePlayer
+    | SinglePlayer1
+    | SinglePlayer2
     | MultiPlayer
 
 type Game = {
