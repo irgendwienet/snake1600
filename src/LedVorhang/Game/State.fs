@@ -3,7 +3,26 @@
 open System
 open Elmish
 open Game.Model
+open HardwareLayer
 open Microsoft.VisualBasic.CompilerServices
+
+let screensaverUpdate msg model  (s:IScreensaver) =       
+    match msg with
+    // AnyKey
+    | Gamepad1ButtonPressed _ 
+    | Gamepad2ButtonPressed _ 
+    | Gamepad1DirectionPressed _ 
+    | Gamepad2DirectionPressed _ ->
+        { model with
+            CurrentPageOpenSince = DateTime.Now
+            CurrentPage = SelectPlayers MultiPlayer }, Cmd.none
+        
+    | Tick ->
+        s.Update()
+        model, Cmd.none
+        
+    | _ ->
+        model, Cmd.none
        
 let textUpdate msg model page =       
     match msg with
@@ -146,3 +165,4 @@ let update msg (model:Model) =
         | Game game -> GameState.gameUpdate msg model game
         | GameOver (game, waitingTime) -> gameOverUpdate msg model game waitingTime
         | Text page -> textUpdate msg model page
+        | Screensaver s -> screensaverUpdate msg model s 

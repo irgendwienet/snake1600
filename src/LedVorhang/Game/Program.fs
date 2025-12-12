@@ -24,11 +24,11 @@ let createLedDisplay () =
 
     QuadDeviceDisplay(device1, device3, device2, device0)
 
-let createConsoleDisolay () =
+let createConsoleDisplay () =
     ConsoleDisplay(true)
         
 if RuntimeInformation.IsOSPlatform(OSPlatform.Windows) then
-   let display = createConsoleDisolay()
+   let display = createConsoleDisplay()
    
    Program.mkProgram (fun _ -> init true, Cmd.none) State.update (View.view display)
     |> Program.withSubscription Subscription.WindowsPc

@@ -1,6 +1,7 @@
 ﻿module Game.Model
 
 open System
+open HardwareLayer
 
 type PlayMode =
     | SinglePlayer1
@@ -27,6 +28,7 @@ type TextPage = {
 }
 
 type Page =
+    | Screensaver  of IScreensaver
     | Text of TextPage
     | SelectPlayers of PlayMode 
     | Game of Game
@@ -46,7 +48,9 @@ type Model = {
 let initSnake1 () = Snake.Init 10 20 Direction.Up
 let initSnake2 () = Snake.Init 30 20 Direction.Down
 
-let startPage = Text { Text = "Kidspace"; Position = 0}  
+let startPage =
+    Screensaver (new MatrixScreensaver(40, 40))
+   //Text { Text = "Kidspace"; Position = 0}  
 
 let init controlerMirrored =
     {

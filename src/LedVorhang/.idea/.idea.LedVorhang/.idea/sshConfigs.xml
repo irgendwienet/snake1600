@@ -3,7 +3,7 @@
   <component name="SshConfigs">
     <configs>
       <sshConfig authType="PASSWORD" host="raspberryled" id="542705ec-b645-4640-8032-7bffee90624c" port="22" nameFormat="DESCRIPTIVE" username="benjamin" useOpenSSHConfig="true" />
-      <sshConfig authType="PASSWORD" host="[fe80::a7c:1232:7470:a850%50]" id="b0623535-8df1-4117-bc22-490832f5b6a6" port="22" nameFormat="DESCRIPTIVE" username="benjamin" useOpenSSHConfig="true" />
+      <sshConfig authType="PASSWORD" host="[fe80::38f9:80c:9ae6:c1f5%34]" id="b0623535-8df1-4117-bc22-490832f5b6a6" port="22" nameFormat="DESCRIPTIVE" username="benjamin" useOpenSSHConfig="true" />
     </configs>
   </component>
 </project>

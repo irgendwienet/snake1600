@@ -158,6 +158,7 @@ let view (display:IDisplay) (model:Model) dispatch =
         showOuterBorder()
         
         match model.CurrentPage with
+        | Screensaver s -> s.Draw image
         | Text page -> viewText page
         | SelectPlayers mode -> viewSelectPlayers mode
         | Game game -> viewGame game
