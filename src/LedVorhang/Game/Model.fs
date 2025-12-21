@@ -1,6 +1,7 @@
 ﻿module Game.Model
 
 open System
+open Elmish
 open HardwareLayer
 
 type PlayMode =
@@ -52,17 +53,17 @@ let startPage =
     Screensaver (new MatrixScreensaver(40, 40))
    //Text { Text = "Kidspace"; Position = 0}  
 
-let init controlerMirrored =
+let init ()=
     {
-      Player1ControlerMirrored = controlerMirrored
-      Player2ControlerMirrored = controlerMirrored
+      Player1ControlerMirrored = Config.getBool "controller1.mirrored" false
+      Player2ControlerMirrored = Config.getBool "controller2.mirrored" false
       
       Beat = false
       ViewNeedsRefresh = true
       
       CurrentPageOpenSince = DateTime.Now
       CurrentPage = startPage  
-    }
+    }, Cmd.none
 
 type GamepadButton =
     | X

@@ -2,9 +2,14 @@
 
 open System
 open Elmish
+open Game
 open Game.Model
 open HardwareLayer
 open Microsoft.VisualBasic.CompilerServices
+
+let controller1CanChangeMirrored = (Config.getBool "Controller1CanChangeMirrored" false)
+let controller2CanChangeMirrored = (Config.getBool "Controller2CanChangeMirrored" false)
+
 
 let screensaverUpdate msg model  (s:IScreensaver) =       
     match msg with
@@ -154,9 +159,15 @@ let update msg (model:Model) =
     match msg with
     // Das ist unabhängig der Page
     | Gamepad1ButtonPressed Dragon ->
-         {model with Player1ControlerMirrored = not model.Player1ControlerMirrored}, Cmd.none
+         if controller1CanChangeMirrored then
+            {model with Player1ControlerMirrored = not model.Player1ControlerMirrored}, Cmd.none
+         else
+             model, Cmd.none
     | Gamepad2ButtonPressed Dragon ->
-         {model with Player2ControlerMirrored = not model.Player2ControlerMirrored}, Cmd.none
+         if controller2CanChangeMirrored then
+            {model with Player2ControlerMirrored = not model.Player2ControlerMirrored}, Cmd.none
+         else
+             model, Cmd.none        
     | ViewRefreshed -> { model with ViewNeedsRefresh = false }, Cmd.none
          
     | _ ->

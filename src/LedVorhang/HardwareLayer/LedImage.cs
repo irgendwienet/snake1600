@@ -45,7 +45,7 @@ public class LedImage
         Data[x, y] = c;
     }
 
-    internal Color GetPixel(int x, int y, bool isMirrored)
+    internal Color GetPixel(int x, int y, bool isMirrored = false)
     {
         if (x < 0 || x >= Width)
         {

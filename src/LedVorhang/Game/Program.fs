@@ -4,6 +4,7 @@ open System.Device.Spi
 open System.Runtime.InteropServices
 open Elmish
 open Game
+open Game.Config
 open Game.Model
 open HardwareLayer
 
@@ -22,7 +23,9 @@ let createLedDisplay () =
     let device2 = createWs2812B(3)
     let device3 = createWs2812B(4)
 
-    QuadDeviceDisplay(device1, device3, device2, device0)
+    let display = QuadDeviceDisplay(device1, device3, device2, device0)
+    display.IsMirrored <- (getBool "display.mirrored" false)
+    display
 
 let createConsoleDisplay () =
     ConsoleDisplay(true)
@@ -30,13 +33,13 @@ let createConsoleDisplay () =
 if RuntimeInformation.IsOSPlatform(OSPlatform.Windows) then
    let display = createConsoleDisplay()
    
-   Program.mkProgram (fun _ -> init true, Cmd.none) State.update (View.view display)
+   Program.mkProgram init State.update (View.view display)
     |> Program.withSubscription Subscription.WindowsPc
     |> Program.run
 else
     let display = createLedDisplay()
 
-    Program.mkProgram (fun _ -> init true, Cmd.none) State.update (View.view display)
+    Program.mkProgram init State.update (View.view display)
     |> Program.withSubscription Subscription.RaspberryPi
     |> Program.run
 

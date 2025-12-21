@@ -19,7 +19,7 @@ public class QuadDeviceDisplay : IDisplay
     private bool _dirtyC = true;
     private bool _dirtyD = true;
     
-    public bool IsMirrored { get; set; } = true;
+    public bool IsMirrored { get; set; } = false;
 
     public QuadDeviceDisplay(Ws28xxVorhang a, Ws28xxVorhang b, Ws28xxVorhang c, Ws28xxVorhang d)
     {
