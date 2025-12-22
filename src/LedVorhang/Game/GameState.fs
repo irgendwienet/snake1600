@@ -94,6 +94,14 @@ let gameUpdate msg (model:Model) (game:Game) =
         { model with CurrentPage = Game game }, cmd
 
     | ItsGameOver ->
+        
+        Database.LogGame
+            game.StartTime
+            DateTime.Now
+            game.Mode
+            game.Player1Points
+            game.Player2Points
+        
         { model with CurrentPage = GameOver (game, 25) }, Cmd.none
         
     | _ ->

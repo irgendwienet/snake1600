@@ -13,7 +13,9 @@ type Game = {
     Mode: PlayMode
     
     Food: Position 
-       
+
+    StartTime: DateTime
+           
     Player1: Snake option
     Player1Points: int
     Player1Alive: bool

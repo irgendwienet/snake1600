@@ -72,6 +72,8 @@ let selectPlayersUpdate msg model mode =
                     Food = { X=0; Y=0 }
                     Mode = MultiPlayer
                     
+                    StartTime = DateTime.Now
+                    
                     Player1 = Some (initSnake1())
                     Player1Points = 0
                     Player1Alive = true
@@ -85,6 +87,8 @@ let selectPlayersUpdate msg model mode =
                     Food = { X=0; Y=0 }
                     Mode = SinglePlayer1
                     
+                    StartTime = DateTime.Now
+                    
                     Player1 = Some (initSnake1())
                     Player1Points = 0
                     Player1Alive = true
@@ -97,6 +101,8 @@ let selectPlayersUpdate msg model mode =
                 {
                     Food = { X=0; Y=0 }
                     Mode = SinglePlayer2
+                    
+                    StartTime = DateTime.Now
                     
                     Player1 = None
                     Player1Points = 0

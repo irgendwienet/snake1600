@@ -8,6 +8,9 @@ open Game.Config
 open Game.Model
 open HardwareLayer
 
+// Initialize database (create file/table if needed) before starting the app
+Database.init()
+
 let createLedDisplay () =
 
     let createWs2812B chipSelectLine = 
@@ -28,8 +31,8 @@ let createLedDisplay () =
     display
 
 let createConsoleDisplay () =
-    ConsoleDisplay(true)
-        
+    ConsoleDisplay(true)       
+
 if RuntimeInformation.IsOSPlatform(OSPlatform.Windows) then
    let display = createConsoleDisplay()
    
