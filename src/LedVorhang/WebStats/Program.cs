@@ -47,8 +47,10 @@ static StatsDto GetStats(string connectionString)
     // Games per day
     using (var cmd = conn.CreateCommand())
     {
-        cmd.CommandText = @"SELECT date(Start) as Day, COUNT(*) as Games
+        cmd.CommandText = @"SELECT date(Start) as Day, 
+                            COUNT(*) as Games
                             FROM GamesPlayed
+                            WHERE PointsPlayer1 > 0 OR PointsPlayer2 > 0 OR DurationInSeconds > 5
                             GROUP BY Day
                             ORDER BY Day DESC";
         using var reader = cmd.ExecuteReader();
@@ -79,17 +81,10 @@ static StatsDto GetStats(string connectionString)
 
             var high = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
             dto.DailyHighscores.Add(new DayCount(dayName, high));
-            dto.SumOfDailyHighscores += high; // Sum over days
+            
+            if (dto.OverallHighscore < high) 
+                dto.OverallHighscore = high;
         }
-    }
-
-    // Overall highest score
-    using (var cmd = conn.CreateCommand())
-    {
-        cmd.CommandText = @"SELECT MAX(CASE WHEN PointsPlayer1 > PointsPlayer2 THEN PointsPlayer1 ELSE PointsPlayer2 END)
-                            FROM GamesPlayed";
-        var scalar = cmd.ExecuteScalar();
-        dto.OverallHighscore = scalar == DBNull.Value || scalar == null ? 0 : Convert.ToInt32(scalar, CultureInfo.InvariantCulture);
     }
 
     return dto;
@@ -131,6 +126,5 @@ class StatsDto
     public List<DayCount> GamesPerDay { get; } = new();
     public List<DayCount> DailyHighscores { get; } = new();
     public int TotalGames { get; set; }
-    public int SumOfDailyHighscores { get; set; }
     public int OverallHighscore { get; set; }
 }
