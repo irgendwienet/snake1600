@@ -207,25 +207,24 @@ let showScoreUpdate msg model game =
         model, Cmd.none
 
 let gameOverUpdate msg model game waitingtime =
-    let points = Math.Max(game.Player1Points, game.Player2Points)
-    let isHighscore = points > 0
-    let position = 3
-    
     let model = 
         if waitingtime > 0 then
             { model with CurrentPage = GameOver (game, waitingtime - 1) }
         else
-            if isHighscore then 
+            
+            let points = Math.Max(game.Player1Points, game.Player2Points)    
+            match Database.isWithinTopN 5 points with
+            | Some top ->             
                 let highscorePage = {
                     Score = points
                     Name = "AAAA"
-                    Position = position
+                    Position = top
                     EditPosition = 1
                     Game = game
                     WinningPlayer = if game.Player1Points > game.Player2Points then SinglePlayer1 else SinglePlayer2
                 } 
                 { model with CurrentPage = (AskForHighscore highscorePage) }
-            else
+            | _ ->
                 { model with CurrentPage = ShowScore game }
             
     model, Cmd.none

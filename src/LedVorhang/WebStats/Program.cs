@@ -34,7 +34,7 @@ static string getDayName(DateTime date)
 
     return $"Day {diff}";
     
-    return date.ToLongDateString();
+    // return date.ToLongDateString();
 }
 
 static StatsDto GetStats(string connectionString)
