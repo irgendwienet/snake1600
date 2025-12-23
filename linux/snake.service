@@ -1,0 +1,15 @@
+[Unit]
+Description=Game .NET Service
+After=network.target
+
+[Service]
+WorkingDirectory=/home/benjamin/rider
+ExecStart=/home/benjamin/.dotnet/dotnet /home/benjamin/rider/Game.dll
+Restart=always
+RestartSec=10
+# Optional: Festlegen des Users, unter dem der Dienst laufen soll
+User=benjamin
+
+[Install]
+WantedBy=multi-user.target
+

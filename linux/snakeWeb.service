@@ -1,0 +1,15 @@
+[Unit]
+Description=Website for Game .NET Service
+After=network.target
+
+[Service]
+WorkingDirectory=/home/benjamin/rider
+ExecStart=/home/benjamin/.dotnet/dotnet /home/benjamin/rider/WebStats.dll
+Restart=always
+RestartSec=10
+# Optional: Festlegen des Users, unter dem der Dienst laufen soll
+User=benjamin
+
+[Install]
+WantedBy=multi-user.target
+
