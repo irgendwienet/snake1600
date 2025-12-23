@@ -253,6 +253,10 @@ let update msg (model:Model) =
             { model with CurrentPage = startPage }
         | GameOver _  when pageAge > TimeSpan.FromSeconds(120) ->
             { model with CurrentPage = startPage }
+        | AskForHighscore _ when pageAge > TimeSpan.FromSeconds(120) ->
+            { model with CurrentPage = startPage }
+        | ShowScore _  when pageAge > TimeSpan.FromSeconds(120) ->
+            { model with CurrentPage = startPage }
         | _ -> model
                                           
     match msg with

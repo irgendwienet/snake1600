@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Load configuration. Default path matches Game/appsettings.json
 // You can override via environment variable ASPNETCORE_ prefixed or user secrets.
 builder.Configuration
-       .AddJsonFile("appsettings.json", optional: true)
+       .AddJsonFile("appsettings.json")
        .AddEnvironmentVariables();
 
 var app = builder.Build();
@@ -87,6 +87,8 @@ static StatsDto GetStats(string connectionString)
         }
     }
 
+    conn.Close();
+    
     return dto;
 }
 
