@@ -37,11 +37,24 @@ let init () =
           PointsPlayer2 INTEGER NOT NULL
         );
         """
-
     use cmd = conn.CreateCommand()
     cmd.CommandText <- createSql
     cmd.ExecuteNonQuery() |> ignore
 
+    // Create the Highscore table if it does not exist
+    let createSql =
+        """
+        CREATE TABLE IF NOT EXISTS Highscore (
+          Id INTEGER PRIMARY KEY AUTOINCREMENT,
+          Date DATETIME NOT NULL,
+          Points INTEGER NOT NULL,
+          Name STRING NOT NULL
+        );
+        """
+    use cmd = conn.CreateCommand()
+    cmd.CommandText <- createSql
+    cmd.ExecuteNonQuery() |> ignore    
+    
     // Done
     ()
 
@@ -76,3 +89,24 @@ let LogGame (startTime: DateTime) (endTime: DateTime) (mode: PlayMode) (pointsPl
     cmd.ExecuteNonQuery() |> ignore
 
     ()
+
+let LogHighscore (points: int) (name: string) =
+    let dbPath = getDbPath ()
+    use conn = new SqliteConnection($"Data Source={dbPath};Cache=Shared")
+    conn.Open()
+    
+    use cmd = conn.CreateCommand()
+    cmd.CommandText <- "INSERT INTO Highscore (Date, Points, Name) VALUES ($date, $points, $name);"
+    let p name value =
+        let p = cmd.CreateParameter()
+        p.ParameterName <- name
+        p.Value <- value
+        cmd.Parameters.Add(p) |> ignore
+        
+    p "$date" (box (DateTime.Now))
+    p "$points" (box points)
+    p "$name" (box name)
+    
+    cmd.ExecuteNonQuery() |> ignore
+    
+    () 

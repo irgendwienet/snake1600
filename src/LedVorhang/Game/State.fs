@@ -52,6 +52,80 @@ let textUpdate msg model page =
     | _ ->
         model, Cmd.none
        
+let higscoreUpdate msg model (page:HighscorePage) =
+    // Allowed characters sequence for name input: A-Z, 0-9, then SPACE
+    let allowedChars : char array =
+        Array.append [|'A'..'Z'|] (Array.append [|'0'..'9'|] [| ' ' |])
+
+    let nextChar (c:char) =
+        let idx = allowedChars |> Array.tryFindIndex (fun x -> x = Char.ToUpper c) |> Option.defaultValue 0
+        let nextIdx = (idx + 1) % allowedChars.Length
+        allowedChars[nextIdx]
+
+    let prevChar (c:char) =
+        let idx = allowedChars |> Array.tryFindIndex (fun x -> x = Char.ToUpper c) |> Option.defaultValue 0
+        let prevIdx = (idx - 1 + allowedChars.Length) % allowedChars.Length
+        allowedChars[prevIdx]
+
+    let updateCharAt (s:string) (pos:int) (f:char -> char) =
+        // pos is 1-based EditPosition; ensure within bounds of the name string
+        if String.IsNullOrEmpty s then s
+        else
+            let i = Math.Clamp(pos - 1, 0, s.Length - 1)
+            let chars = s.ToCharArray()
+            chars[i] <- f chars[i]
+            String chars
+            
+    let isCorrectController =
+        match msg with
+        | Gamepad1DirectionPressed _ when page.WinningPlayer = SinglePlayer1 -> true
+        | Gamepad2DirectionPressed _ when page.WinningPlayer = SinglePlayer2 -> true
+        | Gamepad1ButtonPressed _ when page.WinningPlayer = SinglePlayer1 -> true
+        | Gamepad2ButtonPressed _ when page.WinningPlayer = SinglePlayer2 -> true
+        | _ -> false
+
+    if not isCorrectController then
+        model, Cmd.none
+    else
+        match msg with
+        | Gamepad1DirectionPressed Left
+        | Gamepad2DirectionPressed Left ->
+            let newPos = 
+                if page.EditPosition < 4 then page.EditPosition + 1 else page.EditPosition 
+            let page = { page with EditPosition = newPos }
+            { model with CurrentPage = (AskForHighscore page) }, Cmd.none
+            
+        | Gamepad1DirectionPressed Right
+        | Gamepad2DirectionPressed Right ->
+            let newPos = 
+                if page.EditPosition > 1 then page.EditPosition - 1 else page.EditPosition 
+            let page = { page with EditPosition = newPos }
+            { model with CurrentPage = (AskForHighscore page) }, Cmd.none
+
+        | Gamepad1DirectionPressed Up
+        | Gamepad2DirectionPressed Up ->
+            let newName = updateCharAt page.Name page.EditPosition nextChar
+            let page = { page with Name = newName }
+            { model with CurrentPage = (AskForHighscore page) }, Cmd.none
+
+        | Gamepad1DirectionPressed Down
+        | Gamepad2DirectionPressed Down -> 
+            let newName = updateCharAt page.Name page.EditPosition prevChar
+            let page = { page with Name = newName }
+            { model with CurrentPage = (AskForHighscore page) }, Cmd.none
+            
+        | Gamepad1ButtonPressed Start
+        | Gamepad1ButtonPressed A
+        | Gamepad2ButtonPressed Start
+        | Gamepad2ButtonPressed A ->
+            Database.LogHighscore page.Score page.Name
+            
+            { model with CurrentPage = ShowScore page.Game }, Cmd.none
+            
+        | _ ->
+            model, Cmd.none
+        
+        
 let selectPlayersUpdate msg model mode =
     match msg with
     | Gamepad1DirectionPressed Right
@@ -121,20 +195,40 @@ let selectPlayersUpdate msg model mode =
     | _ ->
         model, Cmd.none
 
-let gameOverUpdate msg model game waitingtime =
-    let model = { model with CurrentPage = GameOver (game, waitingtime - 1) } 
-    
-    if waitingtime > 0 then
+
+let showScoreUpdate msg model game =   
+    match msg with
+    | Gamepad1ButtonPressed _ 
+    | Gamepad2ButtonPressed _ ->
+        { model with
+            CurrentPageOpenSince = DateTime.Now
+            CurrentPage = SelectPlayers game.Mode }, Cmd.none
+    | _ ->
         model, Cmd.none
-    else
-        match msg with
-        | Gamepad1ButtonPressed _ 
-        | Gamepad2ButtonPressed _ ->
-            { model with
-                CurrentPageOpenSince = DateTime.Now
-                CurrentPage = SelectPlayers game.Mode }, Cmd.none
-        | _ ->
-            model, Cmd.none
+
+let gameOverUpdate msg model game waitingtime =
+    let points = Math.Max(game.Player1Points, game.Player2Points)
+    let isHighscore = points > 0
+    let position = 3
+    
+    let model = 
+        if waitingtime > 0 then
+            { model with CurrentPage = GameOver (game, waitingtime - 1) }
+        else
+            if isHighscore then 
+                let highscorePage = {
+                    Score = points
+                    Name = "AAAA"
+                    Position = position
+                    EditPosition = 1
+                    Game = game
+                    WinningPlayer = if game.Player1Points > game.Player2Points then SinglePlayer1 else SinglePlayer2
+                } 
+                { model with CurrentPage = (AskForHighscore highscorePage) }
+            else
+                { model with CurrentPage = ShowScore game }
+            
+    model, Cmd.none
         
 let update msg (model:Model) =
     let msg = 
@@ -181,5 +275,7 @@ let update msg (model:Model) =
         | SelectPlayers mode -> selectPlayersUpdate msg model mode
         | Game game -> GameState.gameUpdate msg model game
         | GameOver (game, waitingTime) -> gameOverUpdate msg model game waitingTime
+        | ShowScore game -> showScoreUpdate msg model game
         | Text page -> textUpdate msg model page
-        | Screensaver s -> screensaverUpdate msg model s 
+        | Screensaver s -> screensaverUpdate msg model s
+        | AskForHighscore page -> higscoreUpdate msg model page

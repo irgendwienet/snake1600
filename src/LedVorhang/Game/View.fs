@@ -117,8 +117,8 @@ let viewGameOver (game:Game) beat =
     
     showCrossHair (if beat then Color.Red else Color.Yellow)
              
-let viewScore (game:Game) beat waitingtime =
-    let beat = if waitingtime > 25 then true else beat
+let viewScore (game:Game) beat =
+    //let beat = if waitingtime > 25 then true else beat
         
     TextRenderer.printText
         Font.Font_7x9
@@ -151,6 +151,28 @@ let viewScore (game:Game) beat waitingtime =
                 28 10
                 LightYellow
 
+let highscoreInput page =
+    TextRenderer.printText
+        Font.Font_7x9
+        $"TOP{page.Position}"
+        Color.Red
+        3
+        5
+        setPixel
+        
+    TextRenderer.printText
+        Font.Font_7x9
+        page.Name
+        Color.Blue
+        3
+        17
+        setPixel
+        
+    drawBorder
+        (2 + (page.EditPosition-1) * 9) 16
+        8 10
+        Color.DarkGreen
+
 let view (display:IDisplay) (model:Model) dispatch =
         
     if model.ViewNeedsRefresh then
@@ -162,11 +184,12 @@ let view (display:IDisplay) (model:Model) dispatch =
         | Text page -> viewText page
         | SelectPlayers mode -> viewSelectPlayers mode
         | Game game -> viewGame game
-        | GameOver (game, waitingTime) when waitingTime > 0
+        | GameOver (game, _)
              -> viewGameOver game model.Beat
-        | GameOver (game, waitingTime)
-             -> viewScore game model.Beat -waitingTime
-        
+        | ShowScore game
+             -> viewScore game model.Beat
+        | AskForHighscore page -> highscoreInput page
+
         display.Update image
 
         ViewRefreshed |> dispatch

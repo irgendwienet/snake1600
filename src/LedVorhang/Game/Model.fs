@@ -30,12 +30,25 @@ type TextPage = {
     Position: int
 }
 
+type HighscorePage = {
+    Score: int
+    Position: int
+    Name: string
+    EditPosition: int
+    WinningPlayer: PlayMode // nur 1 oder 2
+    
+    
+    Game: Game
+}
+
 type Page =
     | Screensaver  of IScreensaver
     | Text of TextPage
     | SelectPlayers of PlayMode 
     | Game of Game
     | GameOver of Game * int
+    | AskForHighscore of HighscorePage
+    | ShowScore of Game
 
 type Model = {
     Player1ControlerMirrored: bool
