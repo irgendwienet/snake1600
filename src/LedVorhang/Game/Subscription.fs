@@ -83,6 +83,6 @@ let RaspberryPi model =
     
 let WindowsPc model =
     [
-        [ "gamepad1" ], keyboardSub    
         [ "timer" ], timerSub
+        [ "gamepad1" ], keyboardSub    
     ]

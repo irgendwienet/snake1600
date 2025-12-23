@@ -31,19 +31,21 @@ let createLedDisplay () =
     display
 
 let createConsoleDisplay () =
-    ConsoleDisplay(true)       
+    AnsiConsoleDisplay(true)       
 
 if RuntimeInformation.IsOSPlatform(OSPlatform.Windows) then
    let display = createConsoleDisplay()
+   let sub = Subscription.WindowsPc ()
    
    Program.mkProgram init State.update (View.view display)
-    |> Program.withSubscription Subscription.WindowsPc
-    |> Program.run
+   |> Program.withSubscription (fun _ -> sub) 
+   |> Program.run
 else
     let display = createLedDisplay()
-
+    let sub = Subscription.RaspberryPi ()
+        
     Program.mkProgram init State.update (View.view display)
-    |> Program.withSubscription Subscription.RaspberryPi
+    |> Program.withSubscription (fun _ -> sub)
     |> Program.run
 
 printfn "It's running"
