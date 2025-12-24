@@ -120,7 +120,7 @@ let higscoreUpdate msg model (page:HighscorePage) =
         | Gamepad2ButtonPressed A ->
             Database.LogHighscore page.Score page.Name
             
-            { model with CurrentPage = ShowScore page.Game }, Cmd.none
+            { model with CurrentPage = ShowScore (page.Game, 15) }, Cmd.none
             
         | _ ->
             model, Cmd.none
@@ -196,7 +196,9 @@ let selectPlayersUpdate msg model mode =
         model, Cmd.none
 
 
-let showScoreUpdate msg model game =   
+let showScoreUpdate msg model game waitingTime =
+    let model = {model with CurrentPage = ShowScore (game, waitingTime-1)}
+    
     match msg with
     | Gamepad1ButtonPressed _ 
     | Gamepad2ButtonPressed _ ->
@@ -225,7 +227,7 @@ let gameOverUpdate msg model game waitingtime =
                 } 
                 { model with CurrentPage = (AskForHighscore highscorePage) }
             | _ ->
-                { model with CurrentPage = ShowScore game }
+                { model with CurrentPage = ShowScore (game, 15) }
             
     model, Cmd.none
         
@@ -278,7 +280,7 @@ let update msg (model:Model) =
         | SelectPlayers mode -> selectPlayersUpdate msg model mode
         | Game game -> GameState.gameUpdate msg model game
         | GameOver (game, waitingTime) -> gameOverUpdate msg model game waitingTime
-        | ShowScore game -> showScoreUpdate msg model game
+        | ShowScore (game, waitingTime) -> showScoreUpdate msg model game waitingTime
         | Text page -> textUpdate msg model page
         | Screensaver s -> screensaverUpdate msg model s
         | AskForHighscore page -> higscoreUpdate msg model page

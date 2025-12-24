@@ -117,8 +117,8 @@ let viewGameOver (game:Game) beat =
     
     showCrossHair (if beat then Color.Red else Color.Yellow)
              
-let viewScore (game:Game) beat =
-    //let beat = if waitingtime > 25 then true else beat
+let viewScore (game:Game) beat waitingtime =
+    let beat = if waitingtime < 0 then true else beat
         
     TextRenderer.printText
         Font.Font_7x9
@@ -186,8 +186,8 @@ let view (display:IDisplay) (model:Model) dispatch =
         | Game game -> viewGame game
         | GameOver (game, _)
              -> viewGameOver game model.Beat
-        | ShowScore game
-             -> viewScore game model.Beat
+        | ShowScore (game, waitingTime)
+             -> viewScore game model.Beat waitingTime
         | AskForHighscore page -> highscoreInput page
 
         display.Update image

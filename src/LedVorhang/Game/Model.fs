@@ -48,7 +48,7 @@ type Page =
     | Game of Game
     | GameOver of Game * int
     | AskForHighscore of HighscorePage
-    | ShowScore of Game
+    | ShowScore of Game * int
 
 type Model = {
     Player1ControlerMirrored: bool
