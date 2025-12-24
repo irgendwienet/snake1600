@@ -7,7 +7,7 @@ namespace HardwareLayer;
 /// Special 24bit GRB format for Neo pixel LEDs where each bit is converted to 3 bits.
 /// A one is converted to 110, a zero is converted to 100.
 /// </summary>
-internal class BitmapImageNeo3Vorhang : RawPixelContainer
+public class BitmapImageNeo3Vorhang : RawPixelContainer
 {
     // The Neo Pixels require a 50us delay (all zeros) after. Since Spi freq is not exactly
     // as requested 100us is used here with good practical results. 100us @ 2.4Mbps and 8bit
@@ -21,12 +21,21 @@ internal class BitmapImageNeo3Vorhang : RawPixelContainer
 
     static BitmapImageNeo3Vorhang()
     {
+        Init();
+    }
+
+    public static void Init(int brightness = 100)
+    {
         for (int i = 0; i < 256; i++)
         {
+            var v = i;
+            if (brightness <= 100)
+                v = (int)(i * brightness / 100.0);
+            
             int data = 0;
             for (int j = 7; j >= 0; j--)
             {
-                data = (data << 3) | 0b100 | ((i >> j) << 1) & 2;
+                data = (data << 3) | 0b100 | ((v >> j) << 1) & 2;
             }
 
             _lookup[i * BytesPerComponent + 0] = unchecked((byte)(data >> 16));

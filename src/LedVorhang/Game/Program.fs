@@ -41,6 +41,9 @@ if RuntimeInformation.IsOSPlatform(OSPlatform.Windows) then
    |> Program.withSubscription (fun _ -> sub) 
    |> Program.run
 else
+    let brightness = Config.getInt "brightness" 100
+    HardwareLayer.BitmapImageNeo3Vorhang.Init(brightness)
+        
     let display = createLedDisplay()
     let sub = Subscription.RaspberryPi ()
         
