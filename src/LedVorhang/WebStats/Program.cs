@@ -155,7 +155,7 @@ static string RenderHtml(StatsDto s)
     var sb = new System.Text.StringBuilder();
     sb.Append("<!doctype html><html lang=\"de\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
     sb.Append("<title>Snake im Kidspace</title>");
-    sb.Append("<style>body{font-family:Segoe UI,Arial,sans-serif;margin:20px;} table{border-collapse:collapse;margin:10px 0;min-width:320px;} th,td{border:1px solid #ccc;padding:6px 10px;text-align:right;} th:first-child, td:first-child{text-align:left;} h2{margin-top:30px;} .totals{display:flex;gap:30px;flex-wrap:wrap} .card{border:1px solid #ddd;padding:10px 14px;border-radius:8px;background:#fafafa}</style>");
+    sb.Append("<style>body{font-family:Segoe UI,Arial,sans-serif;margin:20px;} table{border-collapse:collapse;margin:10px 0;min-width:320px;} th,td{border:1px solid #ccc;padding:6px 10px;text-align:right;} th:first-child, td:first-child{text-align:left;} h2{margin-top:30px;} .totals{display:flex;gap:30px;flex-wrap:wrap} .card{border:1px solid #ddd;padding:10px 14px;border-radius:8px;background:#fafafa} footer{margin-top:40px;color:#666;font-size:.9em}</style>");
     sb.Append("</head><body>");
     sb.Append("<h1>Snake im Kidspace</h1>");
 
@@ -163,6 +163,7 @@ static string RenderHtml(StatsDto s)
     sb.Append($"<div class=card><div>Games played</div><div style=\"font-size:1.6em;font-weight:600\">{s.TotalGames:N0}</div></div>");
     sb.Append($"<div class=card><div>Highscore (overall)</div><div style=\"font-size:1.6em;font-weight:600\">{s.OverallHighscore:N0}</div></div>");
     sb.Append("</div>");
+
 
     // Place the three tables side-by-side when space allows
     sb.Append("<div style=\"display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start\">");
@@ -193,6 +194,9 @@ static string RenderHtml(StatsDto s)
     sb.Append("</tbody></table></div>");
 
     sb.Append("</div>");
+
+    // Footer at the bottom
+    sb.Append("<footer>by Benjamin (DECT 2365) — <a href=\"https://github.com/irgendwienet/snake1600\" target=\"_blank\" rel=\"noopener noreferrer\">sourcecode</a></footer>");
 
     sb.Append("</body></html>");
     return sb.ToString();
