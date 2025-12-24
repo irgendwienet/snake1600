@@ -102,7 +102,9 @@ let gameUpdate msg (model:Model) (game:Game) =
             game.Player1Points
             game.Player2Points
         
-        { model with CurrentPage = GameOver (game, 15) }, Cmd.none
+        { model with
+            CurrentPageOpenSince = DateTime.Now
+            CurrentPage = GameOver (game, 15) }, Cmd.none
         
     | _ ->
         model, Cmd.none

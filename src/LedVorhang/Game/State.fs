@@ -120,7 +120,9 @@ let higscoreUpdate msg model (page:HighscorePage) =
         | Gamepad2ButtonPressed A ->
             Database.LogHighscore page.Score page.Name
             
-            { model with CurrentPage = ShowScore (page.Game, 15) }, Cmd.none
+            { model with
+                CurrentPageOpenSince = DateTime.Now
+                CurrentPage = ShowScore (page.Game, 15) }, Cmd.none
             
         | _ ->
             model, Cmd.none
@@ -191,17 +193,20 @@ let selectPlayersUpdate msg model mode =
         
         let game = { game with Food = GameState.newFoodPos game }
         
-        { model with CurrentPage = Game game }, Cmd.none
+        { model with
+            CurrentPageOpenSince = DateTime.Now
+            CurrentPage = Game game }, Cmd.none
     | _ ->
         model, Cmd.none
 
 
 let showScoreUpdate msg model game waitingTime =
-    let model = {model with CurrentPage = ShowScore (game, waitingTime-1)}
-    
     match msg with
-    | Gamepad1ButtonPressed _ 
-    | Gamepad2ButtonPressed _ ->
+    | Tick ->
+        let model = {model with CurrentPage = ShowScore (game, waitingTime-1)}
+        model, Cmd.none
+    | Gamepad1ButtonPressed _  
+    | Gamepad2ButtonPressed _ when waitingTime < 10 ->
         { model with
             CurrentPageOpenSince = DateTime.Now
             CurrentPage = SelectPlayers game.Mode }, Cmd.none
@@ -209,27 +214,34 @@ let showScoreUpdate msg model game waitingTime =
         model, Cmd.none
 
 let gameOverUpdate msg model game waitingtime =
-    let model = 
-        if waitingtime > 0 then
-            { model with CurrentPage = GameOver (game, waitingtime - 1) }
-        else
-            
-            let points = Math.Max(game.Player1Points, game.Player2Points)    
-            match Database.isWithinTopN 5 points with
-            | Some top ->             
-                let highscorePage = {
-                    Score = points
-                    Name = "AAAA"
-                    Position = top
-                    EditPosition = 1
-                    Game = game
-                    WinningPlayer = if game.Player1Points > game.Player2Points then SinglePlayer1 else SinglePlayer2
-                } 
-                { model with CurrentPage = (AskForHighscore highscorePage) }
-            | _ ->
-                { model with CurrentPage = ShowScore (game, 15) }
-            
-    model, Cmd.none
+    match msg with
+    | Tick ->
+        let model = 
+            if waitingtime > 0 then
+                { model with CurrentPage = GameOver (game, waitingtime - 1) }
+            else
+                
+                let points = Math.Max(game.Player1Points, game.Player2Points)    
+                match Database.isWithinTopN 5 points with
+                | Some top ->             
+                    let highscorePage = {
+                        Score = points
+                        Name = "AAAA"
+                        Position = top
+                        EditPosition = 1
+                        Game = game
+                        WinningPlayer = if game.Player1Points > game.Player2Points then SinglePlayer1 else SinglePlayer2
+                    } 
+                    { model with
+                        CurrentPageOpenSince = DateTime.Now
+                        CurrentPage = (AskForHighscore highscorePage) }
+                | _ ->
+                    { model with
+                        CurrentPageOpenSince = DateTime.Now
+                        CurrentPage = ShowScore (game, 15) }            
+        model, Cmd.none
+        
+    | _ -> model, Cmd.none
         
 let update msg (model:Model) =
     let msg = 
@@ -252,13 +264,21 @@ let update msg (model:Model) =
     let model =
         match model.CurrentPage with
         | SelectPlayers _ when pageAge > TimeSpan.FromSeconds(120) ->
-            { model with CurrentPage = startPage }
+            { model with
+                CurrentPageOpenSince = DateTime.Now
+                CurrentPage = startPage }
         | GameOver _  when pageAge > TimeSpan.FromSeconds(120) ->
-            { model with CurrentPage = startPage }
+            { model with
+                CurrentPageOpenSince = DateTime.Now
+                CurrentPage = startPage }
         | AskForHighscore _ when pageAge > TimeSpan.FromSeconds(120) ->
-            { model with CurrentPage = startPage }
+            { model with
+                CurrentPageOpenSince = DateTime.Now
+                CurrentPage = startPage }
         | ShowScore _  when pageAge > TimeSpan.FromSeconds(120) ->
-            { model with CurrentPage = startPage }
+            { model with
+                CurrentPageOpenSince = DateTime.Now
+                CurrentPage = startPage }
         | _ -> model
                                           
     match msg with
