@@ -1,9 +1,16 @@
-# 1600 LED Vorhang
+# Snake auf einem  1600 LED Vorhang
 
-4 Stück Vorhang mit 20x20 LEDs = 1600 LEDs
+4 Stück Vorhang mit 20x20 LEDs = 1600 LEDs, die jeweils einzeln angesteuert werden.
+
+## Photos
+
+TDB
+
+## Wireing
+
+TDB
 
 ## Strom
-
 
 Je LED / Farbe < 13 mA
 
