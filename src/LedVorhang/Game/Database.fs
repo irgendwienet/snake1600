@@ -114,27 +114,30 @@ let LogHighscore (points: int) (name: string) =
 let isWithinTopN (n: int) (points: int) =
     // checks if the given points are within the top n points
     
-    let dbPath = getDbPath ()
-    use conn = new SqliteConnection($"Data Source={dbPath};Cache=Shared")
-    conn.Open()
-    
-    use cmd = conn.CreateCommand()
-    cmd.CommandText <- "SELECT count(id)+1 FROM Highscore WHERE Points > $points AND Date >= $today ORDER BY Points DESC;"
-    
-    let p name value =
-        let p = cmd.CreateParameter()
-        p.ParameterName <- name
-        p.Value <- value
-        cmd.Parameters.Add(p) |> ignore
+    if points = 0 then
+        None
+    else
+        let dbPath = getDbPath ()
+        use conn = new SqliteConnection($"Data Source={dbPath};Cache=Shared")
+        conn.Open()
         
-    p "$today" (box DateTime.Today)
-    p "$points" (box points)    
+        use cmd = conn.CreateCommand()
+        cmd.CommandText <- "SELECT count(id)+1 FROM Highscore WHERE Points > $points AND Date >= $today ORDER BY Points DESC;"
         
-    use reader = cmd.ExecuteReader();
-    let myPosition =
-        if reader.Read() then
-            reader.GetInt32(0)
-        else
-            1
-    
-    if myPosition <= n then Some myPosition else None    
+        let p name value =
+            let p = cmd.CreateParameter()
+            p.ParameterName <- name
+            p.Value <- value
+            cmd.Parameters.Add(p) |> ignore
+            
+        p "$today" (box DateTime.Today)
+        p "$points" (box points)    
+            
+        use reader = cmd.ExecuteReader();
+        let myPosition =
+            if reader.Read() then
+                reader.GetInt32(0)
+            else
+                1
+        
+        if myPosition <= n then Some myPosition else None    
