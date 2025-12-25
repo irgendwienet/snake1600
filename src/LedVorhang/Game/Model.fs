@@ -1,6 +1,8 @@
 ﻿module Game.Model
 
 open System
+open System.Drawing
+open System.Linq
 open Elmish
 open HardwareLayer
 
@@ -49,6 +51,7 @@ type Page =
     | GameOver of Game * int
     | AskForHighscore of HighscorePage
     | ShowScore of Game * int
+    | Test of Color
 
 type Model = {
     Player1ControlerMirrored: bool
@@ -68,7 +71,16 @@ let startPage =
     Screensaver (new MatrixScreensaver(40, 40))
    //Text { Text = "Kidspace"; Position = 0}  
 
+let testPage =
+    Test Color.Red
+
 let init ()=
+    let page =
+        if Environment.GetCommandLineArgs().Contains "--test" then
+            testPage
+        else
+            startPage
+    
     {
       Player1ControlerMirrored = Config.getBool "controller1.mirrored" false
       Player2ControlerMirrored = Config.getBool "controller2.mirrored" false
@@ -77,7 +89,7 @@ let init ()=
       ViewNeedsRefresh = true
       
       CurrentPageOpenSince = DateTime.Now
-      CurrentPage = startPage  
+      CurrentPage = page  
     }, Cmd.none
 
 type GamepadButton =

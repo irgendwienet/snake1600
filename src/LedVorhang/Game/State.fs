@@ -1,6 +1,7 @@
 ﻿module Game.State
 
 open System
+open System.Drawing
 open Elmish
 open Game
 open Game.Model
@@ -10,6 +11,20 @@ open Microsoft.VisualBasic.CompilerServices
 let controller1CanChangeMirrored = (Config.getBool "Controller1CanChangeMirrored" false)
 let controller2CanChangeMirrored = (Config.getBool "Controller2CanChangeMirrored" false)
 
+
+let testUpdate msg model color =
+    match msg with
+    | Gamepad1ButtonPressed A -> { model with CurrentPage = Test Color.Red }, Cmd.none
+    | Gamepad1ButtonPressed B -> { model with CurrentPage = Test Color.Green }, Cmd.none
+    | Gamepad1ButtonPressed X -> { model with CurrentPage = Test Color.Blue }, Cmd.none
+    | Gamepad1ButtonPressed Y -> { model with CurrentPage = Test Color.White }, Cmd.none
+    | Gamepad1ButtonPressed ShoulderLeft -> { model with CurrentPage = Test Color.Black }, Cmd.none
+    | Gamepad1ButtonPressed ShoulderRight -> { model with CurrentPage = Test Color.Yellow }, Cmd.none
+    | Gamepad1DirectionPressed Left -> { model with CurrentPage = Test Color.Orange }, Cmd.none
+    | Gamepad1DirectionPressed Right -> { model with CurrentPage = Test Color.Chocolate }, Cmd.none
+    | Gamepad1DirectionPressed Up -> { model with CurrentPage = Test Color.LightGray }, Cmd.none
+    | Gamepad1DirectionPressed Down -> { model with CurrentPage = Test Color.LightSkyBlue }, Cmd.none
+    | _ -> model, Cmd.none
 
 let screensaverUpdate msg model  (s:IScreensaver) =       
     match msg with
@@ -304,3 +319,4 @@ let update msg (model:Model) =
         | Text page -> textUpdate msg model page
         | Screensaver s -> screensaverUpdate msg model s
         | AskForHighscore page -> higscoreUpdate msg model page
+        | Test c -> testUpdate msg model c 

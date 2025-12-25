@@ -32,6 +32,11 @@ let drawBorder y x heigth width color =
         setPixel x (y+i) color
         setPixel (x+width) (y+i) color
 
+let drawFilledRect y x heigth width color =
+    for a in 0 .. width do
+        for b in 0 .. heigth do 
+            setPixel (x+a) (y+b) color
+
 let showOuterBorder () =
     drawBorder 0 0 39 39 LowWhite
 
@@ -172,7 +177,10 @@ let highscoreInput page =
         (2 + (page.EditPosition-1) * 9) 16
         8 10
         Color.DarkGreen
-
+        
+let fullColor color =
+    drawFilledRect 0 0 39 39 color
+    
 let view (display:IDisplay) (model:Model) dispatch =
         
     if model.ViewNeedsRefresh then
@@ -189,6 +197,7 @@ let view (display:IDisplay) (model:Model) dispatch =
         | ShowScore (game, waitingTime)
              -> viewScore game model.Beat waitingTime
         | AskForHighscore page -> highscoreInput page
+        | Test c -> fullColor c
 
         display.Update image
 
