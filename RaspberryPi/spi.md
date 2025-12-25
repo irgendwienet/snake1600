@@ -36,4 +36,4 @@ Der Raspberry Pi stellt und ein SPI-Datensignal sowie 4 ChipSelect Pins bereit. 
 ich einen SN7NCN08 (4x NOR) genutzt habe, so dass jeder der 4 LED-Stränge nur dann ein Signal bekommt, wenn der 
 entsprechende ChipSelect Pin aktiv ist.
 
-![Pinout](./pinout.png)
+![Pinout](pinout.png) 
